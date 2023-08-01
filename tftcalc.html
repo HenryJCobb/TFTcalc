@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html> <head>
+<?php
+require 'hcobb/head.inc';
+?>
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+<meta content="utf-8" http-equiv="encoding">
+<title>TFT CP Calculator</title>
+<style type="text/css">
+  textarea {
+    color: black;
+    background-color: #ffffb0 }
+input { text-align: left; }
+</style>
+<script src="js/tftcalc.js?v=4"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<h1>TFT CP Calculator by <a href="http://www.hcobb.com/">Henry J. Cobb</a></h1>
+<p>All page references are to <a href="https://thefantasytrip.game/">The Fantasy Trip</a> In the Labyrinth rulebook, unless noted otherwise.</p>
+<p>A collection of my own musings, not to be taken too seriously. <a href="http://www.hcobb.com/">-HJC</a></p>
+<p><b>CP</b> is hundreds of XPs to build the character up from zero attributes. Enter a valid character and it will show the CPs required.</p>
+<p><b>Format to text</b> and <b>Parse from text</b> ought to write (read) the <a href="http://www.sjgames.com/general/guidelines/authors/writing-thefantasytrip/">standard text format</a> into (from) the yellow box below, but struggle with equipment lists.</p>
+<form>
+Name: <input type="TEXT" name="Namef" size="80"><br>
+<select name="racef" onchange="change_race(this.form);">
+  <option>Human
+  <option>Centaur
+  <option>Deep elf
+  <option>Dwarf
+  <option>Half-dwarf
+  <option>Elf
+  <option>Half-elf
+  <option>Gargoyle
+  <option>Giant
+  <option>Half-giant
+  <option>Goblin
+  <option>Half-goblin
+  <option>Halfling
+  <option>Hobgoblin
+  <option>Merfolk
+  <option>Orc
+  <option>Half-orc
+  <option>Orcling
+  <option>Prootwaddle
+  <option>Reptile Person
+  <option>Shadowight
+</select>
+<select name="classf" onchange="price(this.form);">
+  <option value="0">Hero
+  <option value="1">Wizard
+</select>, age <input type="TEXT" name="Agef" size="3" value="20"><br>
+ST <select name="STf" onchange="price(this.form);">
+  <option selected>8
+  <option>9
+  <option>10
+  <option>11
+  <option>12
+  <option>13
+  <option>14
+  <option>15
+  <option>16
+  <option>17
+  <option>18
+  <option>19
+  <option>20
+  <option>21
+  <option>22
+  <option>23
+  <option>24
+</select>,
+DX <select name="DXf" onchange="price(this.form);">
+  <option selected>8
+  <option>9
+  <option>10
+  <option>11
+  <option>12
+  <option>13
+  <option>14
+  <option>15
+  <option>16
+  <option>17
+  <option>18
+  <option>19
+  <option>20
+  <option>21
+  <option>22
+  <option>23
+  <option>24
+</select>,
+IQ <select name="IQf" onchange="price(this.form);">
+  <option selected>8
+  <option>9
+  <option>10
+  <option>11
+  <option>12
+  <option>13
+  <option>14
+  <option>15
+  <option>16
+  <option>17
+  <option>18
+  <option>19
+  <option>20
+  <option>21
+  <option>22
+  <option>23
+  <option>24
+</select>,
+Mana <select name="Manaf" onchange="price(this.form);">
+  <option>0
+</select><br>
+Talents: <input type="TEXT" name="TLf" size="80"><br>
+<select name="TLs">
+  <option>-
+</select> <button type="button" onclick="add_talent(this.form);">Add</button> <button type="button" onclick="del_talent(this.form);">Delete</button><br>
+Spells: <input type="TEXT" name="SPf" size="80"><br>
+<select name="SPs">
+  <option>-
+</select> <button type="button" onclick="add_spell(this.form);">Add</button> <button type="button" onclick="del_spell(this.form);">Delete</button><br>
+Languages: <input type="TEXT" name="LNf" size="80"><br>
+<select name="LNs">
+  <option>-
+</select> <button type="button" onclick="add_language(this.form);">Add</button> <button type="button" onclick="del_language(this.form);">Delete</button><br>
+<table>
+  <tr><th>Weapons</th><td><input type="TEXT" name="WPf" size="80"></td></tr>
+  <tr><th>Armor</th><td><input type="TEXT" name="ARf" size="80"></td></tr>
+  <tr><th>Equipment</th><td><input type="TEXT" name="EQf" size="80"></td></tr>
+  <tr><th>Magic Items</th><td><input type="TEXT" name="MIf" size="80"></td></tr>
+  </table>
+<br>
+<br>
+<a href="" title="Atribute Points are the sum of ST+DX+IQ">AP:</a><input type="TEXT" name="APf" size="3">,
+<a href="" title="Memory Points are the total cost of all talents, spells, and languages">MP:</a><input type="TEXT" name="MPf" size="4">,
+<a href="" title="The minimum number of eXPerience points required to gain all of these abilities, assuming the character started with this IQ level">XP:</a><input type="TEXT" name="XPf" size="10">,
+<a href="" title="The number of silvers to spend for random gear">$:</a><input type="TEXT" name="CSf" size="10" value="1000" onchange="price(this.form);">,
+<a href="" title='Hundreds of XPs (CP) needed to "buy" the listed abilities and gear'>CP:</a><input type="TEXT" name="CPf" size="8"><br>
+<button type="button" onclick="format_stats(this.form);">Format to text</button>
+<button type="button" onclick="parse_stats(this.form);">Parse from text</button>
+<button type="button" onclick="random_gear(this.form);">Random gear</button><br>
+<textarea id="statblock" name="statblock" rows="20" cols="80">
+</textarea>
+</form>
+<hr>
+    <p>The Fantasy Trip(t.m.) is a trademark of Steve Jackson Games, and their rules and art are copyrighted by Steve Jackson Games. All rights are reserved by Steve Jackson Games.<br>
+This game aid is the original creation of <a href="http://www.hcobb.com/">Henry J. Cobb</a> and is released for free distribution, and not for resale, under the permissions granted in the <a href="http://www.sjgames.com/general/online_policy.html">Steve Jackson Games Online Policy</a>.</p>
+</body>
+</html>
