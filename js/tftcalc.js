@@ -22,7 +22,7 @@ var races = {
   Goblin: [6,12,8,24,10,30,8,10,"S","","",["Goblin"],77,-1,6,0.67],
   "Merfolk": [8,24,8,24,8,24,8,10,"M","","-4 DX on land",["Merfolk"],79,-5,5,1.0],
   Orc: [8,24,8,24,8,24,8,10,"M","","",["Orcish"],77,0,5,1.0],
-  "Orcling": [6,16,10,24,8,24,8,10,"S","","",["Common"],78,-2,5,0.5],
+  "Orcling": [6,16,10,24,8,24,7,10,"S","","",["Common"],78,-2,5,0.5],
   Prootwaddle: [10,20,10,20,7,7,0,10,"S","","",["Common"],78,-4,0,1.0],
   "Reptile Person": [12,24,8,24,8,16,4,10,"L","Claws (+2; doubled in HTH), Tail (1d)","",["Reptile Person"],79,-2,4,1.0],
   Shadowight: [5,17,8,24,8,24,5,10,"M","","Light and dark reversed",["Shadowight"],82,-1,5,0.5]
@@ -45,24 +45,23 @@ class Race {
     if(this.name in races) {
       this.row = races[this.name];
     } else {
-      this.error = "Unable to find race for {" + str +"}";
-      console.log(this.error);
-      return false;
+      this.name = 'Human';
+      this.row = races[this.name];
     }
   }
   size() {return this.row[8];}
   MA(adj) {
-    var ary = ("" + this.row[7]).split("/");
-    for(var i = 0; i < ary.length; i++) {ary[i] -= -adj;}
+    let ary = ("" + this.row[7]).split("/");
+    for(let i = 0; i < ary.length; i++) {ary[i] -= -adj;}
     return ary.join("/");
   }
 };
 
 function APXP(AP,base) {
   if(AP <= base) {return 0;}
-  var clip = AP;
+  let clip = AP;
   if(34 < clip) clip = 34;
-  var XP = 100 * (clip - base);
+  let XP = 100 * (clip - base);
 if(AP < 35) return XP;
 XP += 200;
 if(AP < 36) return XP;
@@ -70,7 +69,7 @@ XP += 300;
 if(AP < 37) return XP;
 XP += 600;
 if(AP < 38) return XP;
-var step = 500;
+let step = 500;
 for(i = 38; i <= AP; i++) {
 step *= 2;
 XP += step;
@@ -150,7 +149,7 @@ talents["Blowgun"] = [0,0,8,1,2,"","MW"];
 talents["Boating"] = [0,0,8,1,2,"","T"];
 talents["Bola"] = [9,0,8,1,2,"Thrown Weapons","MW"];
 talents["Boomerang"] = [11,0,8,1,2,"Thrown Weapons","MW"];
-talents["Bow"] = [0,8,7,2,4,"","MW"];
+talents["Bow"] = [0,0,7,2,4,"","MW"];
 talents["Brawling"] = [0,0,7,1,2,"","C"];
 talents["Brewer"] = [0,0,8,2,4,"","FS"];
 talents["Business Sense"] = [0,0,10,2,4,"","S"];
@@ -166,7 +165,7 @@ talents["Chemist"] = [0,0,13,3,6,"","S"];
 talents["Climbing"] = [0,0,9,1,2,"","A"];
 talents["Cook"] = [0,0,8,2,4,"","FRS"];
 talents["Courtly Graces"] = [0,0,11,1,2,"","N"];
-talents["Crossbow"] = [8,8,7,1,2,"","MW"];
+talents["Crossbow"] = [8,0,7,1,2,"","MW"];
 talents["Dagger Expertise"] = [0,12,11,3,6,"Knife","C"];
 talents["Dagger Mastery"] = [0,14,13,3,6,"Dagger Expertise","C"];
 talents["Dancer"] = [0,10,8,1,2,"","E"];
@@ -178,6 +177,7 @@ talents["Diving"] = [0,0,9,1,2,"Swimming","AT"];
 talents["Draper"] = [0,0,8,1,2,"","S"];
 talents["Driver"] = [0,0,9,1,2,"","FRT"];
 talents["Engineer"] = [0,0,10,2,4,"","S"];
+talents["Escape Artist"] = [0,0,12,2,4,"Pickpocket","AS"];
 talents["Expert Horsemanship"] = [0,0,11,2,4,"Horsemanship","AT"];
 talents["Expert Naturalist"] = [0,0,12,2,4,"Naturalist","U"];
 talents["Farmer"] = [0,0,8,1,2,"","F"];
@@ -324,7 +324,7 @@ languages["Yeti"] = [0,0,7,1,1,"","L"];
 class Talent {
   constructor(str) {
     this.error = "";
-    var ary = str.split("(");
+    let ary = str.split("(");
     this.name = ary[0].trim();
     this.name = this.name.charAt(0).toUpperCase() + this.name.slice(1);
     if(this.name in talents) {
@@ -375,7 +375,7 @@ class Talent {
   }
   
   preq() {
-    var req = this.row[5];
+    let req = this.row[5];
     if("-" === req.substring(0,1)) req = req.substring(1);
     return req;
   }
@@ -385,7 +385,7 @@ class Talent {
   }
 
   toString() {
-    var result = this.name;
+    let result = this.name;
     if("" !== this.qualifier) result += " (" +this.qualifier +")";
     return result;
   }
@@ -407,7 +407,7 @@ class Talent {
       if(this.row[2] > being.race.row[5]) return false;
       being.IQ = this.row[2];
     }
-    var pre = this.row[5];
+    let pre = this.row[5];
     if("" == pre) return true;
     if("-" == pre.substr(0,1)) {
       pre = pre.substr(1);
@@ -420,7 +420,7 @@ class Talent {
       }
     }
     if(!(pre in being.talents)) {
-      var preq = new Talent(pre);
+      let preq = new Talent(pre);
       if(preq.satisfy(being)) being.talents[pre] = preq;
     }
     return true;
@@ -439,7 +439,7 @@ class Language {
   }
   
   preq() {
-    var req = this.row[5];
+    let req = this.row[5];
     if("-" === req.substring(0,1)) req = req.substring(1);
     return req;
   }
@@ -449,7 +449,7 @@ class Language {
   }
 
   toString() {
-    var result = this.name;
+    let result = this.name;
     return result;
   }
 };
@@ -755,7 +755,7 @@ class Spell {
   }
 
   preq() {
-    var req = this.row[4];
+    let req = this.row[4];
     if("-" === req.substring(0,1)) req = req.substring(1);
     return req;
   }
@@ -767,10 +767,10 @@ class Spell {
       if(this.row[0] > being.race.row[5]) return false;
       being.IQ = this.row[0];
     }
-    var pre = this.preq();
+    let pre = this.preq();
     if("" == pre) return true;
     if(!(pre in being.spells)) {
-      var preq = new Spell(pre);
+      let preq = new Spell(pre);
       being.spells[pre] = preq;
       preq.satisfy(being);
     }
@@ -785,9 +785,9 @@ class Enchantment {
     this.row = enchantments[name];
     this.value = this.row[0];
     this.level = 1;
-    var rule = this.row[1];
+    let rule = this.row[1];
     if("" === rule) return;
-    var note = rule.substring(0,1);
+    let note = rule.substring(0,1);
     switch (note) {
     case "A":
       while((budget > 2*this.value) && (5 > this.level)) {
@@ -803,7 +803,7 @@ class Enchantment {
     default:
       return;
     }
-    var mod = rule.substring(1);
+    let mod = rule.substring(1);
     switch (mod) {
     case "D":
       this.name = "" + this.level +"-dice " +name;
@@ -842,10 +842,10 @@ class Enchantment {
 }
 
 function random_enchantment(budget) {
-  var keys = Object.keys(enchantments);
-  for(var i =0; i < 5; i++) {
-    var name = keys[ keys.length * Math.random() << 0];
-    var row = enchantments[name];
+  let keys = Object.keys(enchantments);
+  for(let i =0; i < 5; i++) {
+    let name = keys[ keys.length * Math.random() << 0];
+    let row = enchantments[name];
     if(row[0] > budget) continue;
     return new Enchantment(name,budget);
   }
@@ -953,6 +953,7 @@ items["gem"]  = [50,0.01,"R","*"];
 items["jewel"]  = [1000,0.01,"R","*"];
 items["labyrinth kit"] = [30,6,"U","F"];
 items["medium bag"] = [20,2.0,"P","F"];
+items["small bag"] = [1,0.25,"P","F"];
 items["molotail"] = [20,2.0,"M","*"];
 items["physicker’s kit"] = [50,4.0,"T","W"];
 items["pointer necklace"]  = [150,0.1,"U","S"];
@@ -1018,7 +1019,7 @@ coins["gold coin"] = [10.0,0.01,"G"];
 var woodvalues = {ash:5, aspen:5, beech:5, bone:20, cedar:5, cypress:5, ebony:20, elm:5, fir:5, hawthorn:5, hazel:5, holly:5, ivory:50, larch:5, laurel:5, maple:5, oak:5, pine:5, redwood:5, spruce:5, willow:5, yew:5};
 
 function randomwood() {
-    var keys = Object.keys(woodvalues);
+    let keys = Object.keys(woodvalues);
     return keys[ keys.length * Math.random() << 0];
 };
 
@@ -1091,16 +1092,26 @@ class Thing {
       break;
     }
   }
+  toJSON() {
+    return {
+      category: this.category,
+      name: this.name,
+      qty: this.qty,
+      mods: this.mods,
+      enchant: this.enchant
+    }
+  }
+  
   makeSilver() {
     this.material = "S";
     this.value *= 10;
     this.mods.push("silver");
   }
   listname() {
-    var result = "";
+    let result = "";
     if(1 < this.qty) result += this.qty + " ";
     if(this.is_enchanted() && !this.is_staff()) result += "enchanted ";
-    var modidx = this.mods.length -1;
+    let modidx = this.mods.length -1;
     while(modidx >= 0) {
       result += this.mods[modidx] +" ";
       modidx--;
@@ -1110,11 +1121,11 @@ class Thing {
     return result;
   }
   fullname() {
-    var result = "";
+    let result = "";
     if(1 < this.qty) result += this.qty + " ";
-    var modidx = this.mods.length -1;
+    let modidx = this.mods.length -1;
     while(modidx >= 0) {
-      var term = this.mods[modidx] 
+      let term = this.mods[modidx] 
       if(term.includes("Staff")) {
         result = term;
         if(this.mana > 0) {
@@ -1129,11 +1140,11 @@ class Thing {
     result += this.name;
     if(1 < this.qty) result += "s";
     
-    var encnt = this.enchant.length;
+    let encnt = this.enchant.length;
     if(this.is_staff()) encnt--;
     if(0 < encnt) {
-      for(var i = 0; i < this.enchant.length; i++) {
-        var enc = this.enchant[i];
+      for(let i = 0; i < this.enchant.length; i++) {
+        let enc = this.enchant[i];
         if(enc.includes("Staff")) continue;
         if(enc === this.name) continue;
         result += ", " +enc;
@@ -1159,7 +1170,7 @@ class Thing {
       enc.value = 0;
       return;
     }
-    for(var i = 0; i < this.enchant.length; i++) enc.value *= 2;
+    for(let i = 0; i < this.enchant.length; i++) enc.value *= 2;
     this.enchant.push(enc.name);
   }
 };
@@ -1177,7 +1188,7 @@ class TFTWeapon extends Thing {
     this.talent = this.row[0];
     this.dam = this.row[1];
     this.dxadj = 0;
-    var daa = this.dam.split("d");
+    let daa = this.dam.split("d");
     this.avg = 3.5*daa[0] -(-daa[1]);
   }
 
@@ -1186,18 +1197,18 @@ class TFTWeapon extends Thing {
   }
   
   talentchk(mytal) {
-    var tal = this.talent;
+    let tal = this.talent;
     if("" === tal) return false;
     if(!(tal in mytal)) return false;
     if("Knife" === tal) tal = "Dagger";
-    var isExpert = false;
+    let isExpert = false;
     if((tal+" Expertise") in mytal) isExpert = true;
     if((("rapier" === this.name) || ("saber" === this.name)) && ("Fencer" in mytal)) isExpert = true;
     if(isExpert) {
-      var isMaster = false;
+      let isMaster = false;
       if((tal+" Mastery") in mytal) isMaster = true;
       if((("rapier" === this.name) || ("saber" === this.name)) && ("Master Fencer" in mytal)) isMaster = true;
-      var mod = 1;
+      let mod = 1;
       if(isMaster) mod = 2;
       this.adjdam(0,mod);
     }
@@ -1205,7 +1216,7 @@ class TFTWeapon extends Thing {
   }
   
   adjdam(dice, adds) {
-    var daa = this.dam.split("d");
+    let daa = this.dam.split("d");
     daa[0] -= -dice;
     daa[1] -= -adds;
     if(0 < daa[1]) {
@@ -1218,7 +1229,7 @@ class TFTWeapon extends Thing {
   }
 
   makeBalanced() {
-    var tal = this.row[0];
+    let tal = this.row[0];
     if(!"Sword,Axe/Mace,Pole Weapons".includes(tal)) return false;
     this.value *= 10;
     this.mods.push("well balanced");
@@ -1227,7 +1238,7 @@ class TFTWeapon extends Thing {
   }
 
   makeFine() {
-    var tal = this.row[0];
+    let tal = this.row[0];
     if(!"Knife,Sword,Axe/Mace,Pole Weapons".includes(tal)) return false;
     this.value *= 10;
     this.adjdam(0,1);
@@ -1236,7 +1247,7 @@ class TFTWeapon extends Thing {
   }
 
   makeVeryFine() {
-    var tal = this.row[0];
+    let tal = this.row[0];
     if(!"Knife,Sword,Axe/Mace,Pole Weapons".includes(tal)) return false;
     this.value *= 20;
     this.adjdam(0,2);
@@ -1245,14 +1256,14 @@ class TFTWeapon extends Thing {
   }
 
   MakeEnchant(dx,hits) {
-    var bonus = dx + hits;
+    let bonus = dx + hits;
     if(0 == bonus) return;
     if(5 < bonus) return;
-    var enchantcost = 1000;
-    for(var i = 1; i< bonus; i++) enchantcost *= 2;
+    let enchantcost = 1000;
+    for(let i = 1; i< bonus; i++) enchantcost *= 2;
     this.value += enchantcost;
     this.dxadj += dx;
-    var modstr = "enchanted for ";
+    let modstr = "enchanted for ";
     if((0 < dx) && (0 < hits)) {
       modstr += "+" + dx + " DX and +" + hits +" damage";
     } else if(0 < dx) {
@@ -1264,7 +1275,7 @@ class TFTWeapon extends Thing {
     if(0 < hits) this.adjdam(0,hits);
   }
   listname() {
-    var result = Thing.prototype.listname.call(this);
+    let result = Thing.prototype.listname.call(this);
     result += " (" +this.dam;
     if(0 != this.dxadj) result += ", +" +this.dxadj +" DX";
     result += ")";
@@ -1303,10 +1314,10 @@ class Armor extends Thing {
   MakeEnchant(bonus) {
     if(0 == bonus) return;
     if(5 < bonus) return;
-    var enchantcost = 1000;
-    for(var i = 1; i< bonus; i++) enchantcost *= 2;
+    let enchantcost = 1000;
+    for(let i = 1; i< bonus; i++) enchantcost *= 2;
     this.stops += bonus;
-    var modstr = "enchanted +" + bonus +" hits";
+    let modstr = "enchanted +" + bonus +" hits";
     this.enchant.push(modstr);
     this.value += enchantcost;
   }
@@ -1320,10 +1331,10 @@ class Shield extends Thing {
   MakeEnchant(bonus) {
     if(0 == bonus) return;
     if(5 < bonus) return;
-    var enchantcost = 1000;
-    for(var i = 1; i< bonus; i++) enchantcost *= 2;
+    let enchantcost = 1000;
+    for(let i = 1; i< bonus; i++) enchantcost *= 2;
     this.stops += bonus;
-    var modstr = "enchanted +" + bonus +" hits";
+    let modstr = "enchanted +" + bonus +" hits";
     this.enchant.push(modstr);
     this.value += enchantcost;
   }
@@ -1340,18 +1351,18 @@ function rolldice(d) {
 }
 
 function random_potion(budget) {
-  var keys = Object.keys(potions);
-  for(var i =0; i < 5; i++) {
-    var name = keys[ keys.length * Math.random() << 0];
-    var row = potions[name];
+  let keys = Object.keys(potions);
+  for(let i =0; i < 5; i++) {
+    let name = keys[ keys.length * Math.random() << 0];
+    let row = potions[name];
     if(row[2] > budget) continue;
-    var pot = new Thing("Potion",name);
+    let pot = new Thing("Potion",name);
     if(row[1] && (budget > (25+5*row[2]))) {
       pot.name += " bomb";
       pot.value = 25+5*row[2];
       pot.weight = 2.0;
     }
-    var qty = randfrac(budget / pot.value);
+    let qty = randfrac(budget / pot.value);
     if(0 < qty) {
       pot.qty = qty;
       pot.value *= qty;
@@ -1363,32 +1374,32 @@ function random_potion(budget) {
 }
 
 function reloadtal(form,ST,DX,IQ) {
-  var err = "";
-  var field = form.TLs;
-  var length = field.options.length;
-  var cl = parseInt(form.classf.value);
-  for (var i = length-1; i >= 0; i--) {
+  let err = "";
+  let field = form.TLs;
+  let length = field.options.length;
+  let cl = parseInt(form.classf.value);
+  for (let i = length-1; i >= 0; i--) {
     field.options[i] = null;
   }
-  var at = {};
-  for (var key in talents) {
+  let at = {};
+  for (let key in talents) {
     tal = talents[key];
     if(ST < tal[0]) continue;
     if(DX < tal[1]) continue;
     if(IQ < tal[2]) continue;
     at[key] = 1;
-    var opt = document.createElement("option");
+    let opt = document.createElement("option");
     opt.text = key;
     opt.value = key;
     field.add(opt,null);
   }
   field = form.LNs;
   length = field.options.length;
-  for (var i = length-1; i >= 0; i--) {
+  for (let i = length-1; i >= 0; i--) {
     field.options[i] = null;
   }
-  for (var key in languages) {
-    var opt = document.createElement("option");
+  for (let key in languages) {
+    let opt = document.createElement("option");
     opt.text = key;
     opt.value = key;
     field.add(opt,null);
@@ -1397,39 +1408,39 @@ function reloadtal(form,ST,DX,IQ) {
 }
 
 function reloadsp(form,IQ) {
-  var err = "";
-  var wizonly = /.*Staff.*/i;
-  var field = form.SPs;
-  var cl = parseInt(form.classf.value);
-  var length = field.options.length;
-  for (var i = length-1; i >= 0; i--) {
+  let err = "";
+  let wizonly = /.*Staff.*/i;
+  let field = form.SPs;
+  let cl = parseInt(form.classf.value);
+  let length = field.options.length;
+  for (let i = length-1; i >= 0; i--) {
     field.options[i] = null;
   }
-  var as = {};
-  for (var key in spells) {
+  let as = {};
+  for (let key in spells) {
     spell = spells[key];
     if(IQ < spell[0]) continue;
     if((0 == cl) && wizonly.test(key)) continue;
     as[key] = 1;
-    var opt = document.createElement("option");
+    let opt = document.createElement("option");
     opt.text = key;
     opt.value = key;
     field.add(opt,null);
   }
-  var sl = form.SPf.value;
+  let sl = form.SPf.value;
   form.SPf.value = "";
-  var sa = [];
+  let sa = [];
   if("" !== sl) sa = sl.split(", ");
-  var nset = new Set();
-  for(var i = 0; i < sa.length; i++) {
-    var key = sa[i];
+  let nset = new Set();
+  for(let i = 0; i < sa.length; i++) {
+    let key = sa[i];
     if(typeof as[key] == "undefined") {
       key = sub_spells[key];
     }
     if(typeof as[key] != "undefined") {
       nset.add(key);
-      var spell = spells[key];
-      var req = spell[4];
+      let spell = spells[key];
+      let req = spell[4];
       while("" !== req) {
         if("-" === req.substring(0,1)) req = req.substring(1);
         nset.add(req);
@@ -1456,13 +1467,13 @@ function reloadsp(form,IQ) {
 }
 
 function reloadat(field,min,max) {
-var cur = parseInt(field.value);
-var length = field.options.length;
-for (var i = length-1; i >= 0; i--) {
+let cur = parseInt(field.value);
+let length = field.options.length;
+for (let i = length-1; i >= 0; i--) {
   field.options[i] = null;
 }
-for(var i = min; i <= max; i++) {
-var opt = document.createElement("option");
+for(let i = min; i <= max; i++) {
+let opt = document.createElement("option");
 opt.text = i;
 opt.value = i;
 field.add(opt,null);
@@ -1474,16 +1485,16 @@ return cur;
 }
 
 function add_talent(form) {
-  var tl = form.TLf.value;
+  let tl = form.TLf.value;
   form.TLf.value = "";
-  var ta = [];
+  let ta = [];
   if("" !== tl) ta = tl.split(", ");
-  var nt = form.TLs.value;
-  var mt = {};
-  for(var i = 0; i < ta.length; i++) mt[ta[i]] = 1;
+  let nt = form.TLs.value;
+  let mt = {};
+  for(let i = 0; i < ta.length; i++) mt[ta[i]] = 1;
   mt[nt] = 1;
-  var tal = talents[nt];
-  var req = tal[5];
+  let tal = talents[nt];
+  let req = tal[5];
   while("" !== req) {
     if("-" === req.substring(0,1)) req = req.substring(1);
     if(req in languages) {
@@ -1495,30 +1506,30 @@ function add_talent(form) {
     }
   }
   ta = [];
-  for(var key in mt) ta.push(key);
+  for(let key in mt) ta.push(key);
   tl = ta.join(", ");
   form.TLf.value = tl;
   price(form);
 }
 
 function del_talent(form) {
-  var tl = form.TLf.value;
+  let tl = form.TLf.value;
   form.TLf.value = "";
-  var ta = [];
+  let ta = [];
   if("" !== tl) ta = tl.split(", ");
-  var nt = form.TLs.value;
-  var mt = {};
-  for(var i = 0; i < ta.length; i++) mt[ta[i]] = 1;
-  var scrub = {};
+  let nt = form.TLs.value;
+  let mt = {};
+  for(let i = 0; i < ta.length; i++) mt[ta[i]] = 1;
+  let scrub = {};
   scrub[nt] = 1;
-  var didscrub = true;
+  let didscrub = true;
   while(didscrub) {
     didscrub = false;
-    for(var key in mt) {
+    for(let key in mt) {
       if(typeof scrub[key] != "undefined") continue;
       if(typeof talents[key] == "undefined") continue;
-      var tal = talents[key];
-      var req = tal[5];
+      let tal = talents[key];
+      let req = tal[5];
       if("-" === req.substring(0,1)) req = req.substring(1);
       if(typeof scrub[req] == "undefined") continue;
       scrub[key] = 1;
@@ -1526,7 +1537,7 @@ function del_talent(form) {
     }
   }
   ta = [];
-  for(var key in mt) {
+  for(let key in mt) {
     if(typeof scrub[key] != "undefined") continue;
     ta.push(key);
   }
@@ -1536,16 +1547,16 @@ function del_talent(form) {
 }
 
 function add_language(form) {
-  var ln = form.LNf.value;
+  let ln = form.LNf.value;
   form.LNf.value = "";
-  var la = [];
+  let la = [];
   if("" !== ln) la = ln.split(", ");
-  var nt = form.LNs.value;
-  var mt = {};
-  for(var i = 0; i < la.length; i++) mt[la[i]] = 1;
+  let nt = form.LNs.value;
+  let mt = {};
+  for(let i = 0; i < la.length; i++) mt[la[i]] = 1;
   mt[nt] = 1;
   la = [];
-  for(var key in mt) la.push(key);
+  for(let key in mt) la.push(key);
   la.sort();
   ln = la.join(", ");
   form.LNf.value = ln;
@@ -1553,16 +1564,16 @@ function add_language(form) {
 }
 
 function del_language(form) {
-  var tl = form.LNf.value;
+  let tl = form.LNf.value;
   form.LNf.value = "";
-  var ta = [];
+  let ta = [];
   if("" !== tl) ta = tl.split(", ");
-  var nt = form.LNs.value;
-  var mt = {};
-  for(var i = 0; i < ta.length; i++) mt[ta[i]] = 1;
+  let nt = form.LNs.value;
+  let mt = {};
+  for(let i = 0; i < ta.length; i++) mt[ta[i]] = 1;
   delete mt[nt];
   ta = [];
-  for(var key in mt) {
+  for(let key in mt) {
     ta.push(key);
   }
   tl = ta.join(", ");
@@ -1571,16 +1582,16 @@ function del_language(form) {
 }
 
 function add_spell(form) {
-  var sl = form.SPf.value;
+  let sl = form.SPf.value;
   form.SPf.value = "";
-  var sa = [];
+  let sa = [];
   if("" !== sl) sa = sl.split(", ");
-  var ns = form.SPs.value;
-  var ms = {};
-  for(var i = 0; i < sa.length; i++) ms[sa[i]] = 1;
+  let ns = form.SPs.value;
+  let ms = {};
+  for(let i = 0; i < sa.length; i++) ms[sa[i]] = 1;
   ms[ns] = 1;
-  var spell = spells[ns];
-  var req = spell[4];
+  let spell = spells[ns];
+  let req = spell[4];
   while("" !== req) {
     if("-" === req.substring(0,1)) req = req.substring(1);
     ms[req] = 1;
@@ -1588,29 +1599,29 @@ function add_spell(form) {
     req = spell[4];
   }
   sa = [];
-  for(var key in ms) sa.push(key);
+  for(let key in ms) sa.push(key);
   sl = sa.join(", ");
   form.SPf.value = sl;
   price(form);
 }
 
 function del_spell(form) {
-var sl = form.SPf.value;
+let sl = form.SPf.value;
 form.SPf.value = "";
-var sa = [];
+let sa = [];
 if("" !== sl) sa = sl.split(", ");
-var ns = form.SPs.value;
-var ms = {};
-for(var i = 0; i < sa.length; i++) ms[sa[i]] = 1;
-var scrub = {};
+let ns = form.SPs.value;
+let ms = {};
+for(let i = 0; i < sa.length; i++) ms[sa[i]] = 1;
+let scrub = {};
 scrub[ns] = 1;
-var didscrub = true;
+let didscrub = true;
 while(didscrub) {
 didscrub = false;
-for(var key in ms) {
+for(let key in ms) {
 if(typeof scrub[key] != "undefined") continue;
-var spell = spells[key];
-var req = spell[4];
+let spell = spells[key];
+let req = spell[4];
 if("-" === req.substring(0,1)) req = req.substring(1);
 if(typeof scrub[req] == "undefined") continue;
 scrub[key] = 1;
@@ -1618,7 +1629,7 @@ didscrub = true;
 }
 }
 sa = [];
-for(var key in ms) {
+for(let key in ms) {
 if(typeof scrub[key] != "undefined") continue;
 sa.push(key);
 }
@@ -1630,26 +1641,26 @@ price(form);
 function change_race(form, race = "") {
   if("" == race) race = new Race(form.racef.value);
   
-  var ST = reloadat(form.STf,race.row[0],race.row[1]);
-  var DX = reloadat(form.DXf,race.row[2],race.row[3]);
-  var IQ = reloadat(form.IQf,race.row[4],race.row[5]);
+  let ST = reloadat(form.STf,race.row[0],race.row[1]);
+  let DX = reloadat(form.DXf,race.row[2],race.row[3]);
+  let IQ = reloadat(form.IQf,race.row[4],race.row[5]);
   price(form);
 }
 
 function price(form) {
-  var ch = new Person();
+  let ch = new Person();
   ch.fromForm(form);
   ch.toForm(form);
 
   if(0 < ch.errors.length) {
-    var err = ch.errors.join("\n");
+    let err = ch.errors.join("\n");
     alert(err);
   }
 } // price
 
 
 function rolldie(mod) {
-var roll = Math.floor((Math.random()*6)+1) +mod;
+let roll = Math.floor((Math.random()*6)+1) +mod;
 if(roll < 1) roll = 1;
 if(roll > 6) roll = 6;
 return roll;
@@ -1669,8 +1680,8 @@ class Person {
   
   unarmed() {
     if("Gargoyle" === this.race.name) return "Stony hands (2d)";
-    var punchdice = 0;
-    var punchmod = 0;
+    let punchdice = 0;
+    let punchmod = 0;
     if("Brawling" in this.talents) punchmod = 1;
     if("Unarmed Combat V" in this.talents) {
       punchdice = 1;
@@ -1686,8 +1697,8 @@ class Person {
       punchmod = 1;
     }
 
-    var dice = 1;
-    var plus = -4;
+    let dice = 1;
+    let plus = -4;
     if(this.ST > 30) {
       plus = 1;
       dice = Math.floor((this.ST-11)/10);
@@ -1702,7 +1713,7 @@ class Person {
     }
     plus += punchmod;
     dice += punchdice;
-    var result = "";
+    let result = "";
     if("Reptile Person" === this.race.name) {
       plus += 2;
       result = "Claws (";
@@ -1723,34 +1734,34 @@ class Person {
 
   parseTalents(str) {
     str = str.replaceAll(";",",");
-    var re = /[+0-9]/gi;
+    let re = /[+0-9]/gi;
     str = str.replace(re,'');
-    var ary = str.split(",");
-    for(var i = 0; i < ary.length; i++) ary[i] = ary[i].trim();
+    let ary = str.split(",");
+    for(let i = 0; i < ary.length; i++) ary[i] = ary[i].trim();
     this.bont = {};
-    var rt = this.race.row[11];
-    for(var i = 0; i < rt.length; i++) {
+    let rt = this.race.row[11];
+    for(let i = 0; i < rt.length; i++) {
       if(rt[i] in languages) {
         this.bonl[rt[i]] = 1;
       } else {
         this.bont[rt[i]] = 1;
       }
     }
-    for (var tal in this.bont) {
+    for (let tal in this.bont) {
       if(!ary.includes(tal)) ary.push(tal);
     }
 
-    for(var i = 0; i < ary.length; i++) {
-      var tn = ary[i].trim();
+    for(let i = 0; i < ary.length; i++) {
+      let tn = ary[i].trim();
       if("" == tn) continue;
       if(tn in sub_talents) tn = sub_talents[tn];
       
       try {
         if(tn in languages) {
-          var lang = new Language(tn);
+          let lang = new Language(tn);
           this.lang[lang.name] = lang;
         } else {
-          var tal = new Talent(tn);
+          let tal = new Talent(tn);
           if(tal.satisfy(this)) this.talents[tal.name] = tal;
         }      
       } catch (e) {
@@ -1760,26 +1771,26 @@ class Person {
   }
 
   parseLang(str) {
-    var ary = str.split(",");
-    for(var i = 0; i < ary.length; i++) ary[i] = ary[i].trim();
+    let ary = str.split(",");
+    for(let i = 0; i < ary.length; i++) ary[i] = ary[i].trim();
     this.bonl = {};
-    var rt = this.race.row[11];
+    let rt = this.race.row[11];
     if(this.wiz && this.IQ > 16) this.bonl["Sorcerers’ Tongue"] = 1;
-    for(var i = 0; i < rt.length; i++) {
+    for(let i = 0; i < rt.length; i++) {
       if(rt[i] in languages) {
         this.bonl[rt[i]] = 1;
       } else {
         this.bont[rt[i]] = 1;
       }
     }
-    for (var tal in this.bonl) {
+    for (let tal in this.bonl) {
       if(!ary.includes(tal)) ary.push(tal);
     }
 
-    for(var i = 0; i < ary.length; i++) {
+    for(let i = 0; i < ary.length; i++) {
       if("" == ary[i]) continue;
       try {
-        var tal = new Language(ary[i]);
+        let tal = new Language(ary[i]);
         this.lang[tal.name] = tal;
       } catch (e) {
         this.errors.push(e.message);
@@ -1789,15 +1800,15 @@ class Person {
 
   parseWeapons(string) {
     this.weapons = [];
-    var ary = string.split(",");
-    var wepexp = new RegExp(Object.keys(weapons).join("|"), "gi");
-    var tmp = Object.keys(enchantments).join("|").replace(/\u002B/g, "\\+");
-    var enchexp = new RegExp(tmp, "g");
-    for(var j =0; j < ary.length; j++) {
-      var matches = ary[j].match(wepexp) || [];
-      for(var i = 0; i < matches.length; i++) {
-        var wn = matches[i].toLowerCase();
-        var testwp = new TFTWeapon(wn);
+    let ary = string.split(",");
+    let wepexp = new RegExp(Object.keys(weapons).join("|"), "gi");
+    let tmp = Object.keys(enchantments).join("|").replace(/\u002B/g, "\\+");
+    let enchexp = new RegExp(tmp, "g");
+    for(let j =0; j < ary.length; j++) {
+      let matches = ary[j].match(wepexp) || [];
+      for(let i = 0; i < matches.length; i++) {
+        let wn = matches[i].toLowerCase();
+        let testwp = new TFTWeapon(wn);
         if(ary[j].match(/silver/i)) testwp.makeSilver();
         if(ary[j].match(/very fine/i)) {
           testwp.makeVeryFine();
@@ -1811,28 +1822,29 @@ class Person {
   }
 
   parseArmor(string) {
+    this.protections = [];
     delete this.armor;
     delete this.shield;
     this.totprot = 0;
-    var ary = string.split(",");
-    var armexp = new RegExp(Object.keys(armors).join("|"), "gi");
-    var shieldexp = new RegExp(Object.keys(shields).join("|"), "gi");
-    var tmp = Object.keys(enchantments).join("|").replace(/\u002B/g, "\\+");
-    var enchexp = new RegExp(tmp, "g");
-    for(var j =0; j < ary.length; j++) {
-      var matches = ary[j].match(armexp) || [];
-      for(var i = 0; i < matches.length; i++) {
-        var arm = matches[i].toLowerCase();
-        var testarm = new Armor(arm,this.race.size());
+    let ary = string.split(",");
+    let armexp = new RegExp(Object.keys(armors).join("|"), "gi");
+    let shieldexp = new RegExp(Object.keys(shields).join("|"), "gi");
+    let tmp = Object.keys(enchantments).join("|").replace(/\u002B/g, "\\+");
+    let enchexp = new RegExp(tmp, "g");
+    for(let j =0; j < ary.length; j++) {
+      let matches = ary[j].match(armexp) || [];
+      for(let i = 0; i < matches.length; i++) {
+        let arm = matches[i].toLowerCase();
+        let testarm = new Armor(arm,this.race.size());
         if(string.match(/silver/i)) testarm.makeSilver();        
         this.armor = testarm;
         this.protections[arm] = testarm.stops;
         this.totprot += testarm.stops;
       }
       matches = ary[j].match(shieldexp) || [];
-      for(var i = 0; i < matches.length; i++) {
-        var shd = matches[i].toLowerCase();
-        var testshd = new Shield(shd);
+      for(let i = 0; i < matches.length; i++) {
+        let shd = matches[i].toLowerCase();
+        let testshd = new Shield(shd);
         if(string.match(/silver/i)) testshd.makeSilver();        
         this.shield = testshd;
         this.protections[shd] = testshd.stops;
@@ -1844,36 +1856,38 @@ class Person {
   parseEquipment(inp) {
     this.equipment = [];
     if('' === inp) return;
-    var ary = inp.split(",");
-    var categories = {
+    let ary = inp.split(",");
+    let categories = {
       Item: items,
       Potion: potions,
       Coins: coins,
     };
-    var catexp = {};
-    for(var cat in categories) {
-      catexp[cat] = new RegExp(Object.keys(categories[cat]).join("|"), "gi");
+    let catexp = {};
+    for(let cat in categories) {
+      let tempstr = Object.keys(categories[cat]).join("|")
+      catexp[cat] = new RegExp(tempstr, "gi");
     }
-    var countexp = /^[ ]*([0-9]+)[^0-9]/;
+    let countexp = /^[ ]*([0-9]+)[^0-9]/;
     
-    var tmp = Object.keys(enchantments).join("|").replace(/\u002B/g, "\\+");
-    var enchexp = new RegExp(tmp, "g");
-    for(var j =0; j < ary.length; j++) {
-      var qty = 1;
-      var matches = ary[j].match(countexp)
+    let tmp = Object.keys(enchantments).join("|").replace(/\u002B/g, "\\+");
+    let enchexp = new RegExp(tmp, "g");
+    for(let j =0; j < ary.length; j++) {
+      let qty = 1;
+      let teststr = ary[j].trim()
+      let matches = teststr.match(countexp)
       if(null != matches) {
         qty = 1 * matches[0];
       }
-      matches = ary[j].match(enchexp)
+      matches = teststr.match(enchexp)
       if(null == matches) {
-        for(var cat in categories) {
-          matches = ary[j].match(catexp[cat]);
+        for(let cat in categories) {
+          matches = teststr.match(catexp[cat]);
           if(null == matches) {
             continue;
           }
-          for(var i = 0; i < matches.length; i++) {
-            var itn = matches[i].toLowerCase();
-            var testitem = new Thing(cat,itn,qty);
+          for(let i = 0; i < matches.length; i++) {
+            let itn = matches[i].toLowerCase();
+            let testitem = new Thing(cat,itn,qty);
             if(cat != "Coins") {
               this.equipment.push(testitem);
             } else {
@@ -1883,15 +1897,15 @@ class Person {
           }
         }
       } else {
-        for(var i = 0; i < matches.length; i++) {
-          var name = matches[i];
-          var item = new Thing("Item",name,qty);
-          var enc = new Enchantment(name,0);
+        for(let i = 0; i < matches.length; i++) {
+          let name = matches[i];
+          let item = new Thing("Item",name,qty);
+          let enc = new Enchantment(name,0);
           item.push_enchantment(enc);
         }
       }
       if(null == matches) {
-        console.log("Found no equipment match for {" + ary[j] + "}");
+        console.log("Found no equipment match for {" + teststr + "}");
       }
     }
   } // parseEquiment
@@ -1900,42 +1914,42 @@ class Person {
   }
   
   sortTalents(trimList) {
-    var excludes = false;
-    var exc = {};
-    var tl = {};
-    var ta = [];
+    let excludes = false;
+    let exc = {};
+    let tl = {};
+    let ta = [];
     if(trimList) {
-      for(var tal in this.talents) {
-        var pre = this.talents[tal].preq();
+      for(let tal in this.talents) {
+        let pre = this.talents[tal].preq();
         if("" != pre) {
           if(trim_talents.test(tal)) exc[pre] = 1;
         }
       }
     }
 
-    for(var tal in this.talents) {
+    for(let tal in this.talents) {
       if(tal in exc) {
         excludes = true;
       } else {
-        var str = tal;
-        var qual = this.talents[tal].qualifier;
+        let str = tal;
+        let qual = this.talents[tal].qualifier;
         if("" != qual) str += " (" +qual +")";
         tl[str] =1;
       }
     }
-    for(var tal in tl) ta.push(tal);
+    for(let tal in tl) ta.push(tal);
     ta.sort();
     tl = ta.join(", ");
     return [excludes, tl];
   }
   
   parseSpells(str) {
-    var ary = str.split(",");
-    for(var i = 0; i < ary.length; i++) {
-      var sn = ary[i].trim();
+    let ary = str.split(",");
+    for(let i = 0; i < ary.length; i++) {
+      let sn = ary[i].trim();
       if("" == sn) continue;
       try {
-        var spl = new Spell(sn);
+        let spl = new Spell(sn);
         if(spl.satisfy(this)) this.spells[spl.name] = spl;
       }catch (e) {
         this.errors.push(e.message);
@@ -1944,16 +1958,16 @@ class Person {
   }
 
   sortSpells(trimList) {
-    var excludes = false;
-    var exc = {};
+    let excludes = false;
+    let exc = {};
     if(trimList) {
-      for(var spl in this.spells) {
-        var pre = this.spells[spl].preq(); 
+      for(let spl in this.spells) {
+        let pre = this.spells[spl].preq(); 
         if("" != pre) exc[pre] = 1;
       }
     }
-    var sa = [];
-    for(var spl in this.spells) {
+    let sa = [];
+    for(let spl in this.spells) {
       if(spl in exc) {
         excludes = true;
       } else {
@@ -1961,24 +1975,24 @@ class Person {
       }
     }
     sa.sort();
-    var sl = sa.join(", ");
+    let sl = sa.join(", ");
     return [excludes, sl];
   }
 
   sortLang() {
-    var sa = [];
-    for(var lang in this.lang) {
+    let sa = [];
+    for(let lang in this.lang) {
       sa.push(lang);
     }
     sa.sort();
-    var sl = sa.join(", ");
+    let sl = sa.join(", ");
     return sl;
   }
 
   fromForm(form) {
     this.errors = [];
     this.charname = form.Namef.value;
-    this.charage = form.Agef.value;
+    this.charage = form.Agef.value.replace(/[^0-9]/gi, '');
     this.race = new Race(form.racef.value);
     if("" !== this.race.error) {
       this.errors.push(this.race.error);
@@ -2011,19 +2025,7 @@ class Person {
     this.equipment = [];
     this.magicitems = [];
 
-    var parsefunc = {
-      WPf: "parseWeapons",
-      ARf: "parseArmor",
-      EQf: "parseEquipment",
-      MIf: "parseItems"
-    };
-    for(var fld in  parsefunc) {
-      var fun = parsefunc[fld];
-      var val = form[fld].value;
-      this[fun](val);
-    }
-
-    var MAadj = 0;
+    let MAadj = 0;
     if("Running" in this.talents) MAadj = 2;
     this.MA = this.race.MA(MAadj);
     this.adjMA = this.MA;
@@ -2058,7 +2060,7 @@ class Person {
     form.LNf.value = this.sortLang();
     form.SPf.value = this.sortSpells(false)[1];
 
-    var maxm = -1;
+    let maxm = -1;
     if("Staff II" in this.spells) {
       maxm = this.IQ;
       if("Staff V" in this.spells) maxm = 2* this.IQ;
@@ -2066,14 +2068,14 @@ class Person {
     reloadat(form.Manaf,0,maxm);
     form.Manaf.value = this.mana;
 
-    var base = this.race.row[0]+this.race.row[2]+this.race.row[4]+this.race.row[6];
-    var AP = -(0 -this.ST - this.DX - this.IQ);
-    var XP = APXP(AP,base) + 200*this.mana;
-    var MP = 0;
+    let base = this.race.row[0]+this.race.row[2]+this.race.row[4]+this.race.row[6];
+    let AP = -(0 -this.ST - this.DX - this.IQ);
+    let XP = APXP(AP,base) + 200*this.mana;
+    let MP = 0;
 
-    var ta = this.talents;
-    for (var tal in ta) {
-      var req = ta[tal].row[5];
+    let ta = this.talents;
+    for (let tal in ta) {
+      let req = ta[tal].row[5];
       if("" === req) continue;
       if("-" === req.substring(0,1))
       {
@@ -2085,7 +2087,7 @@ class Person {
         }
       }
     }
-    for (var tal in ta) {
+    for (let tal in ta) {
       if(tal in this.bont) continue;
       MP += ta[tal].row[3+ this.wiz];
     }
@@ -2093,50 +2095,79 @@ class Person {
     if(("Remove Traps" in ta) && ("Mechanician" in ta)) MP -= (1+this.wiz);
     if(("Physicker" in ta) && ("Vet" in ta)) MP -= (1+this.wiz);
 
-    var sa = this.spells;
-    var bons = {};
-    for(var sp in sa) {
-      var spl = sa[sp];
-      var req = spl.row[4];
+    let sa = this.spells;
+    let bons = {};
+    for(let sp in sa) {
+      let spl = sa[sp];
+      let req = spl.row[4];
       if("" === req) continue;
       if("-" === req.substring(0,1)) bons[sp] = 1;
     }
 
-    for(sp in sa) {
+    for(let sp in sa) {
       if(sp in bons) continue;
       MP += 3 - 2*this.wiz;
     }
 
-    for (var lang in this.lang) {
+    for (let lang in this.lang) {
       if(lang in this.bonl) continue;
       MP++;
     }
 
-    var gearFields = {
+    let gearFields = {
       WPf: "weapons",
+//      ARf: "armor",
       EQf: "equipment",
       MIf: "magicitems"
     };
-    
-    for(var fld in gearFields) {
-      var prop = gearFields[fld];
-      var itar = [];
-      for(var it in this[prop]) {
-        itar.push(this[prop][it].listname());
-      }
-      form[fld].value = itar.join(", ");
-    }
 
-    var armary  = [];
-    if("armor" in this) armary.push(this.armor.listname());
-    if("shield" in this) armary.push(this.shield.listname());
-    form.ARf.value = armary.join(", ");
-      
+    let tbl =  document.getElementById("eqt");
+    while(2 < tbl.rows.length) tbl.deleteRow(tbl.rows.length -2);
+
+    let totcst = 0;
+    let totwt = 0;
+    let itar = [];
+
+    for(let fld in gearFields) {      
+      let prop = gearFields[fld];
+      for(let it in this[prop]) {
+        let nm = this[prop][it].fullname();
+        let cst = this[prop][it].value;
+        if((1*cst) != cst) {
+          console.log("Cost: " +fld + " " + prop + " " +nm + " " +cst);
+          continue;
+        }
+        let wt = (Math.round(this[prop][it].weight * 100) / 100).toFixed(2);
+        if((1*wt) != wt) {
+          console.log("Weight: " +fld + " " + prop + " " +nm + " " +wt);
+          continue;
+        }
+
+        itar.push(this[prop][it]);
+        totcst += 1*cst;
+        totwt += 1*wt;
+        
+        let rw = tbl.insertRow(tbl.rows.length-1);
+        let c0 = rw.insertCell(0);
+        c0.innerHTML = "" + this[prop][it].qty;
+        let c1 = rw.insertCell(1);
+        c1.innerHTML = "" + nm;
+        let c2 = rw.insertCell(2);
+        c2.innerHTML = "" + cst;
+        let c3 = rw.insertCell(3);
+        c3.innerHTML = "" + wt;
+      }
+    }
+    form.eqtc.value = totcst;
+    form.eqtw.value = totwt;
+    let eqjson =  document.getElementById("eqjson");
+    eqjson.value = JSON.stringify(itar);
+    
     if(MP > this.IQ) XP += 500 * (MP - this.IQ);
     if(base > AP) XP -= 100*(base - AP);
     form.XPf.value = XP;
     XP += form.CSf.value / 10;
-    var CP = AP;
+    let CP = AP;
     if(XP > 0) CP = base + (XP/100);
     form.APf.value = AP;
     form.MPf.value = "" +MP +"/" +this.IQ;
@@ -2152,14 +2183,14 @@ class Person {
     this.budget = 1000;
     this.charage = 20;
     
-    var wizMatch = /wizard/gi;
+    let wizMatch = /wizard/gi;
     this.wiz = 0;
     if(wizMatch.test(input)) this.wiz = 1;
     
     input = input.replaceAll(",\n",", ");
     input = input.replaceAll("/\n","/");
-    var lines = input.split("\n");
-    var ln =0;
+    let lines = input.split("\n");
+    let ln =0;
     while(ln < lines.length) {
       lines[ln] = lines[ln].trim();
       ln++
@@ -2168,9 +2199,9 @@ class Person {
     while(!lines[ln].startsWith("Name")) ln++;
     this.charname = lines[++ln];
     while(!lines[ln].startsWith("Age")) ln++;
-    this.charage = lines[++ln];
+    this.charage = lines[++ln].replace(/[^0-9]/gi, '');
     while(!lines[ln].startsWith("Race")) ln++;
-    var racename = lines[++ln];
+    let racename = lines[++ln];
     this.race = new Race(racename);
     if("" !== this.race.error) {
       this.errors.push(this.race.error);
@@ -2184,7 +2215,7 @@ class Person {
     while(!lines[ln].startsWith("IQ")) ln++;
     this.IQ = lines[++ln];
     while(!lines[ln].startsWith("Talent")) ln++;
-    var talstr = "";
+    let talstr = "";
     while(!lines[++ln].startsWith("Attack")) {
       if("" ===  lines[ln]) continue;
       if(!(lines[ln] in talents)) continue;
@@ -2195,7 +2226,7 @@ class Person {
 
     while(!lines[ln].startsWith("Spell")) ln++;
     ln += 5;
-    var spellstr = "";
+    let spellstr = "";
     while(!lines[++ln].startsWith("Armor")) {
       if("" ===  lines[ln]) continue;
       if(!(lines[ln] in spells)) continue;
@@ -2220,36 +2251,36 @@ class Person {
       this.fromRoll20(input);
       return;
     }
-    var reMana = /[^a-z]Mana[^0-9]{1,10}([0-9]+)[^0-9].*/si;
+    let reMana = /[^a-z]Mana[^0-9]{1,10}([0-9]+)[^0-9].*/si;
     if(reMana.test(input)) {
       this.mana = RegExp.$1;
     }
-    var statMatch = /(.*)ST[^0-9]*([0-9]+).{1,10}DX[^0-9]*([0-9]+).{1,10}IQ[^0-9]*([0-9]+)(.*)/si;
+    let statMatch = /(.*)ST[^0-9]*([0-9]+).{1,10}DX[^0-9]*([0-9]+).{1,10}IQ[^0-9]*([0-9]+)(.*)/si;
     if(!statMatch.test(input)) {
       this.errors.push("Please enter stats in the format area");;
     }
-    var header = RegExp.$1;
+    let header = RegExp.$1;
     this.ST = RegExp.$2;
-    var oldST = this.ST;
+    let oldST = this.ST;
     this.DX = RegExp.$3;
-    var oldDX = this.DX;
+    let oldDX = this.DX;
     this.IQ = RegExp.$4;
-    var oldIQ = this.IQ;
+    let oldIQ = this.IQ;
     input = RegExp.$5;
     
     input = input.replaceAll(",\n",", ");
     input = input.replaceAll("/\n","/");
-    var lines = input.split("\n");
-    var ln =0;
-    var tot = lines.length;
+    let lines = input.split("\n");
+    let ln =0;
+    let tot = lines.length;
     while(ln < tot && "" === lines[ln]) ln++;
     if(ln >= tot) {
       this.errors.push("Please enter a character in the format area");
       return;
     }
 
-    var classMatch = /(.*)(hero|wizard)(.*)/i;
-    var ageMatch = /(.*)age[^0-9]*([0-9]+)(.*)/i;
+    let classMatch = /(.*)(hero|wizard)(.*)/i;
+    let ageMatch = /(.*)age[^0-9]*([0-9]+)(.*)/i;
     this.wiz = 0;
     this.charname = "";
     this.race = new Race("Human");
@@ -2260,7 +2291,7 @@ class Person {
     if(raceMatch.test(header)) {
       this.charname = RegExp.$1;
       header = RegExp.$3;
-      var racename = RegExp.$2;
+      let racename = RegExp.$2;
       if("half-" == this.charname.substr(-5)) {
         this.charname = this.charname.substr(0,this.charname.length-5);
         racename = "Half-" + racename;
@@ -2274,29 +2305,29 @@ class Person {
     if(classMatch.test(header)) {
       header = "";
       this.charname += RegExp.$1 +RegExp.$3;
-      var cls = RegExp.$2[0];
+      let cls = RegExp.$2[0];
       if(("w" === cls) || ("W" === cls)) this.wiz = 1;
     }
     this.charname += header;
-    var check = this.charname.substr(-1);
+    let check = this.charname.substr(-1);
     while((" " === check) || ("," === check)) {
       this.charname = this.charname.substr(0,this.charname.length-2);
       check = this.charname.substr(-1);
     }
     while(ln < tot) {
-      var buff = "";
-      var str = lines[ln];
-      var split = str.indexOf(":");
+      let buff = "";
+      let str = lines[ln];
+      let split = str.indexOf(":");
       if(-1 == split) {
         ln++;
         continue;
       }
-      var title = str.substr(0,split);
+      let title = str.substr(0,split);
       buff += str.substr(split+1);
       ln++;
       while(ln < tot) {
         str = lines[ln];
-        var split = str.indexOf(":");
+        let split = str.indexOf(":");
         if(-1 != split) break;
         buff += " " +str;
         ln++;
@@ -2304,7 +2335,7 @@ class Person {
       const hexfix = /-hex/g;
       buff = buff.replace(hexfix,"-Hex");
 
-      var parsefunc = {
+      let parsefunc = {
         parseTalents: /skills|talent|language/gi,
         parseSpells: /spell/gi,
         parseWeapons: /weapon/gi,
@@ -2313,7 +2344,7 @@ class Person {
         parseItems: /magic item/gi
       };
       buff = buff.replaceAll(".","");
-      for(var fun in parsefunc) {
+      for(let fun in parsefunc) {
         if(parsefunc[fun].test(title)) {
           this[fun](buff);
         }
@@ -2325,22 +2356,22 @@ class Person {
   }
   
   rand_gear() {
-    var maxload = 3.0 * this.ST;
-    var myarm = "";
-    if("Gargoyle" !== this.race.name) for(var arm in armors) {
-      var maxpen = rolldice(4) - this.DX;
-      var tospend = randfrac(this.budget/2);
-      var tocarry = randfrac(maxload - this.load);
-      var testarm = new Armor(arm,this.race.size());
+    let maxload = 3.0 * this.ST;
+    let myarm = "";
+    if("Gargoyle" !== this.race.name) for(let arm in armors) {
+      let maxpen = rolldice(4) - this.DX;
+      let tospend = randfrac(this.budget/2);
+      let tocarry = randfrac(maxload - this.load);
+      let testarm = new Armor(arm,this.race.size());
       if((!this.wiz) && (testarm.name.includes("robe"))) continue;
       if(maxpen > testarm.DXa) continue;
       if(tospend < testarm.value) continue;
       if(tocarry < testarm.weight) continue;
       if(((this.wiz) || (0 == randfrac(10))) && ("I" == testarm.material)) testarm.makeSilver();
       if(tospend < testarm.value) continue;
-      var bonus = 0;
-      var enctcst = 1000;
-      var avail = tospend - testarm.value;
+      let bonus = 0;
+      let enctcst = 1000;
+      let avail = tospend - testarm.value;
       while((enctcst < avail) && (bonus < 6)) {
         bonus += 1;
         enctcst *= 2;
@@ -2354,7 +2385,7 @@ class Person {
       if(0 < myarm.stops) this.protections[myarm.listname()] = myarm.stops;
       this.totprot -= -myarm.stops;
       this.adjDX -= -myarm.DXa;
-      var speedAdj = myarm.row[4];
+      let speedAdj = myarm.row[4];
       if(10 != speedAdj) {
         if(8 == speedAdj) {
           this.adjMA = this.race.MA(-2);
@@ -2366,21 +2397,21 @@ class Person {
       this.load -= -myarm.weight;
     }
 
-    var myshield = "";
+    let myshield = "";
     if("Shield" in this.talents) {
-      for(var sh in shields) {
-        var maxpen = rolldice(4) -this.adjDX;
-        var tospend = randfrac(this.budget/3);
-        var tocarry = randfrac(maxload - this.load);
-        var testshd = new Shield(sh);
+      for(let sh in shields) {
+        let maxpen = rolldice(4) -this.adjDX;
+        let tospend = randfrac(this.budget/3);
+        let tocarry = randfrac(maxload - this.load);
+        let testshd = new Shield(sh);
         if(maxpen > testshd.DXa) continue;
         if(tospend < testshd.value) continue;
         if(tocarry < testshd.weight) continue;
         if(((this.wiz) || (0 == randfrac(10))) && ("I" == testshd.material)) testshd.makeSilver();
         if(tospend < testshd.value) continue;
-        var bonus = 0;
-        var enctcst = 1000;
-        var avail = tospend - testarm.value;
+        let bonus = 0;
+        let enctcst = 1000;
+        let avail = tospend - testarm.value;
         while((enctcst < avail) && (bonus < 6)) {
           bonus += 1;
           enctcst *= 2;
@@ -2400,13 +2431,13 @@ class Person {
       this.totprot -= -myshield.stops;
     }
 
-    var mywp = [];
-    for(var wn in weapons) {
-      var testwp = new TFTWeapon(wn);
+    let mywp = [];
+    for(let wn in weapons) {
+      let testwp = new TFTWeapon(wn);
       if(this.ST < testwp.minstr()) continue;
-      var tospend = randfrac(randfrac(this.budget/2));
+      let tospend = randfrac(randfrac(this.budget/2));
       if(((this.wiz) || (0 == randfrac(10))) && ("I" == testwp.material)) testwp.makeSilver();
-      var tocarry = randfrac(maxload - this.load);
+      let tocarry = randfrac(maxload - this.load);
       if(testwp.value > tospend) continue;
       if(testwp.weight > tocarry) continue;
       if(!testwp.talentchk(this.talents)) continue;
@@ -2418,34 +2449,34 @@ class Person {
           testwp.makeFine();
         }
       }
-      var bonus = 0;
-      var enchantcost = 1000;
+      let bonus = 0;
+      let enchantcost = 1000;
       while((bonus <= 5) && (enchantcost < (tospend - testwp.value))) {
         bonus++;
         enchantcost *= 2;
       }
-      var dxbonus = 0;
-      for(var i = 0; i < bonus; i++) {
+      let dxbonus = 0;
+      for(let i = 0; i < bonus; i++) {
         if(rolldice(3) > (dxbonus+this.DX)) dxbonus++;
       }
       if(0 < bonus) testwp.MakeEnchant(dxbonus,bonus - dxbonus);
-      var avg = 0;
-      var tal = testwp.talent;
+      let avg = 0;
+      let tal = testwp.talent;
       if(typeof mywp[tal] !== "undefined") avg = mywp[tal].avg;
       if(testwp.avg > avg) mywp[tal] = testwp;
     }
 
-    var staffspell = "";
+    let staffspell = "";
     if("Staff" in this.spells) {
       staffspell = "Staff";
-      for(var i = 1; i < 5; i++) {
+      for(let i = 1; i < 5; i++) {
         if(staff_spells[i] in this.spells) {
           staffspell = staff_spells[i];
         }
       }
     }
-    for(var wt in mywp) {
-      var weap = mywp[wt];
+    for(let wt in mywp) {
+      let weap = mywp[wt];
       if(weap.value > this.budget) continue;
       if(("" !== staffspell) && weap.is_staffable()) {
         weap.make_staff(staffspell,this.mana);
@@ -2458,11 +2489,11 @@ class Person {
     }
 
     if("" !== staffspell) {
-      var wn = "wand";
+      let wn = "wand";
       if(3 < randfrac(maxload - this.load)) wn = "cane";
       if(3 < randfrac(maxload - this.load)) wn = "club";
       if(5 < randfrac(maxload - this.load)) wn = "maul";
-      var weap = new TFTWeapon(wn);
+      let weap = new TFTWeapon(wn);
       weap.name = randomwood() +" "+ weap.name;
       weap.make_staff(staffspell,this.mana);
       staffspell = "";
@@ -2472,12 +2503,12 @@ class Person {
       this.budget -= weap.value;
       this.load -= -weap.weight;
     }
-    var needarrows = false;
-    var needquarrels = false;
-    var ammo = "";
-    var bow = "";
-    for(var wt in mywp) {
-      var weap = mywp[wt];
+    let needarrows = false;
+    let needquarrels = false;
+    let ammo = "";
+    let bow = "";
+    for(let wt in mywp) {
+      let weap = mywp[wt];
       if("small bow,horse bow,longbow".includes(weap.name)) {
         needarrows = true;
         bow = weap;
@@ -2490,15 +2521,15 @@ class Person {
       if("sling" === weap.name) bow = weap;
     }
 
-    var isil = false;
-    var basecost = 20;
+    let isil = false;
+    let basecost = 20;
     if((this.wiz) || (0 == randfrac(10))) {
       isil = true;
       basecost *= 10;
     }
     if(needarrows && (basecost < this.budget)) {
       ammo = "arrow";
-      var arw = new Thing("Item",ammo,20);
+      let arw = new Thing("Item",ammo,20);
       if(isil) arw.makeSilver();
       this.equipment.push(arw);
       this.budget -= arw.value;
@@ -2506,57 +2537,57 @@ class Person {
     }
     if(needquarrels && (basecost < this.budget)) {
       ammo = "quarrel";
-      var arw = new Thing("Item",ammo,20);
+      let arw = new Thing("Item",ammo,20);
       if(isil) arw.makeSilver();
       this.equipment.push(arw);
       this.budget -= arw.value;
       this.load -= -arw.weight;
     }
     if(("Pathfinder" in this.spells) && (200 < this.budget)) {
-      var thng = new Thing("Item","small silver mirror",1);
+      let thng = new Thing("Item","small silver mirror",1);
       this.equipment.push(thng);
       this.budget -= thng.value;
       this.load -= -thng.weight;
     }
     if(("Scrying" in this.spells) && (200 < this.budget)) {
-      var thng = new Thing("Item","pointer necklace",1);
+      let thng = new Thing("Item","pointer necklace",1);
       this.equipment.push(thng);
       this.budget -= thng.value;
       this.load -= -thng.weight;
     }
-    var tospend = randfrac(this.budget/4);
+    let tospend = randfrac(this.budget/4);
     if(("Explosive Gem" in this.spells) && (250 < tospend)) {
-      var qty = Math.floor(tospend / 250);
+      let qty = Math.floor(tospend / 250);
       if(5 < qty) qty = 5;
-      var thng = new Thing("Item","gem",qty);
+      let thng = new Thing("Item","gem",qty);
       thng.mods.push("8d explosive");
       thng.value -= -200 * qty;
       this.equipment.push(thng);
       this.budget -= thng.value;
       this.load -= -thng.weight;
     }
-    var maxencht = 10;
-    for(var i = 0; i < maxencht; i++) {
-      var enc = random_enchantment(randfrac(this.budget));
+    let maxencht = 10;
+    for(let i = 0; i < maxencht; i++) {
+      let enc = random_enchantment(randfrac(this.budget));
       if("" === enc) continue;
       switch (enc.material()) {
       case "*":
-        var wearables = ["Amulet","Boots","Helm","Quiver"];
-        var worn = {};
-        var wornie = "";
-        for(var w of wearables) {
+        let wearables = ["Amulet","Boots","Helm","Quiver"];
+        let worn = {};
+        let wornie = "";
+        for(let w of wearables) {
           if(enc.name.includes(w)) {
             wornie = w;
           }
         }
         if(("" !== wornie) && (wornie in worn)) {
           if("Quiver" == wornie) continue;
-          thng = worn[wornie];
+          let thng = worn[wornie];
           thng.push_enchantment(enc);
           thng.value += enc.value;
           this.budget -= enc.value;
         } else {
-          var thng = new Thing("Item",enc.name,1);
+          let thng = new Thing("Item",enc.name,1);
           thng.name = enc.name;
           thng.push_enchantment(enc);
           thng.value = enc.value;
@@ -2569,7 +2600,7 @@ class Person {
       case "M":
         switch(ammo) {
         case "":
-          var thng = new Thing("Item","silver ring",1);
+          let thng = new Thing("Item","silver ring",1);
           thng.push_enchantment(enc);
           thng.value += enc.value;
           this.magicitems.push(thng);
@@ -2579,7 +2610,7 @@ class Person {
 
         case "arrow":
         case "quarrel":
-          var arw = new Thing("Item",ammo,20);
+          let arw = new Thing("Item",ammo,20);
           if(isil) arw.makeSilver();
           arw.push_enchantment(enc);
           arw.value += enc.value;
@@ -2608,7 +2639,7 @@ class Person {
         this.budget -= enc.value;
         break;
       case "R":
-        var thng = new Thing("Item","silver ring",1);
+        let thng = new Thing("Item","silver ring",1);
         thng.push_enchantment(enc);
         thng.value += enc.value;
         this.magicitems.push(thng);
@@ -2617,13 +2648,13 @@ class Person {
         break;
       case "W":
         if(0 == this.weapons.length) continue;
-        var weap = this.weapons[0];
+        let weap = this.weapons[0];
         weap.push_enchantment(enc);
         weap.value += enc.value;
         this.budget -= enc.value;
         break;
       default:
-        var thng = "";
+        thng = "";
         if(0 < this.weapons.length) thng = this.weapons[0];
         if("armor" in this) thng = this.armor;
         if("shield" in this) thng = this.shield;
@@ -2641,10 +2672,10 @@ class Person {
       }
     }
 
-    var tocarry = randfrac(maxload - this.load);
-    var tospend = randfrac(this.budget);
-    for(var i = 0; i < 5; i++) {
-      var pot = random_potion(tospend);
+    let tocarry = randfrac(maxload - this.load);
+    tospend = randfrac(this.budget);
+    for(let i = 0; i < 5; i++) {
+      let pot = random_potion(tospend);
       if("" === pot) break;
       if((pot.name === "Gunpowder charge") && (!"Guns" in this.talents)) continue;
       if(tocarry < pot.weight) break;
@@ -2655,11 +2686,11 @@ class Person {
       tocarry -= pot.weight;
     }
     tocarry = maxload - this.load;
-    this.equipment.push(new Thing("Coins","silver coin",this.budget));
+    if(0 < this.budget) this.equipment.push(new Thing("Coins","silver coin",this.budget));
   }
 
   format_stats() {
-    var result = this.charname +", " +this.race.name;
+    let result = this.charname +", " +this.race.name;
     if(this.wiz) result += " wizard";
     result += ", age "+this.charage+"\n";
     result += "ST " + this.ST +", DX " + this.DX;
@@ -2668,9 +2699,9 @@ class Person {
     if(this.adjMA !== this.MA) result += " (" + this.adjMA + ")";
     result += "\n";
 
-    var sortList = this.sortTalents(true);
-    var excludes = sortList[0];
-    var tl = sortList[1];
+    let sortList = this.sortTalents(true);
+    let excludes = sortList[0];
+    let tl = sortList[1];
     if("" !== tl) {
       if(excludes || tl.includes(",")) {
         result += "Talents";
@@ -2682,9 +2713,9 @@ class Person {
       result += tl +"\n";
     }
 
-    var sortedSpells = this.sortSpells(true);
-    var excludes = sortedSpells[0];
-    var sl = sortedSpells[1];
+    let sortedSpells = this.sortSpells(true);
+    excludes = sortedSpells[0];
+    let sl = sortedSpells[1];
 
     if("" !== sl) {
       if(excludes || sl.includes(",")) {
@@ -2697,7 +2728,7 @@ class Person {
       result += sl +"\n";
     }
 
-    var ll = this.sortLang();
+    let ll = this.sortLang();
     if("" !== ll) {
       if(ll.includes(",")) {
         result += "Languages: ";
@@ -2707,11 +2738,11 @@ class Person {
       result += ll +"\n";
     }
 
-    var wpar = [];
-    for(var wep in this.weapons) {
+    let wpar = [];
+    for(let wep in this.weapons) {
       wpar.push(this.weapons[wep].listname());
     }
-    var wpstr = wpar.join(", ");
+    let wpstr = wpar.join(", ");
     if("" !== wpstr) {
       if(wpstr.includes(",")) {
         result += "Weapons: ";
@@ -2725,15 +2756,15 @@ class Person {
     result += "Special Ability/Weakness: \n";
     result += "Armor:";
     if(0 < this.totprot) {
-      var armstr = "";
-      for (var key in this.protections) armstr += key +", ";
+      let armstr = "";
+      for (let key in this.protections) armstr += key +", ";
       armstr = armstr.substring(0, armstr.length - 2);
-      var lastIndex = armstr.lastIndexOf(", ");
-      var stopstr = "stops"
+      let lastIndex = armstr.lastIndexOf(", ");
+      let stopstr = "stops"
       if(-1 != lastIndex) {
         stopstr = "stop"
-        var beginString = armstr.substring(0, lastIndex);
-        var endString = armstr.substring(lastIndex + 2);
+        let beginString = armstr.substring(0, lastIndex);
+        let endString = armstr.substring(lastIndex + 2);
         armstr = beginString + ", and " +endString;
       }
       armstr = armstr.charAt(0).toUpperCase() + armstr.slice(1);
@@ -2742,13 +2773,13 @@ class Person {
     }
     result += "\n";
     sort_things(this.equipment);
-    var eq = [];
-    for(var i = 0; i < this.equipment.length; i++) eq.push(this.equipment[i].fullname());
-    var es = eq.join(", ");
+    let eq = [];
+    for(let i = 0; i < this.equipment.length; i++) eq.push(this.equipment[i].fullname());
+    let es = eq.join(", ");
     result += "Equipment: "+es+"\n";
     if(0 < this.magicitems.length) {
       result += "Magic Items:\n";
-      for(var i = 0; i < this.magicitems.length; i++) {
+      for(let i = 0; i < this.magicitems.length; i++) {
         result += " • " +this.magicitems[i].fullname()
           +", value $" +this.magicitems[i].value
           +"\n";
@@ -2761,7 +2792,7 @@ class Person {
 };
 
 function random_gear(form) {
-  var ch = new Person();
+  let ch = new Person();
   ch.fromForm(form);
   ch.rand_gear();
   form.statblock.value = ch.format_stats();
@@ -2770,17 +2801,74 @@ function random_gear(form) {
 
 
 function format_stats(form) {
-  var ch = new Person();
+  let ch = new Person();
   ch.fromForm(form);
   form.statblock.value = ch.format_stats();
 }
 
 function parse_stats(form) {
-  var ch = new Person();
+  let ch = new Person();
   ch.fromText(form.statblock.value);
   if(0 < ch.errors.length) {
-    var err = ch.errors.join("\n");
+    let err = ch.errors.join("\n");
     alert(err);
   }
   ch.toForm(form);
 }
+
+function canstore() {
+  try {
+    return 'localStorage' in window && window['localStorage'] !== null;
+  } catch (e) {
+    return false;
+  }
+}
+
+
+function loadPeople() {
+let row = document.getElementById("storageRow");
+if(!canstore()) {
+row.style.display = 'none';
+} else {
+  row.style.display = '';
+  let x = document.getElementById("savedUnits");
+  while(0 < x.length) {
+    x.remove(0);
+  }
+  unitArray = new Object;
+
+  let sauce = localStorage["unitArray"];
+  if('' < sauce) {
+    unitArray = JSON.parse(sauce);
+
+    for(let uName in unitArray) {
+      let option=document.createElement("option");
+      option.text=uName;
+      x.add(option,null);
+    }
+  } // if any units in array
+} // if can store units
+}// loadUnits
+
+function storeUnit(f) {
+  let uName = f.unitName.value;
+  if('' < uName) {
+    let u = formunit(f);
+    unitArray[uName] = u;
+    localStorage["unitArray"] = JSON.stringify(unitArray);
+    loadUnits();
+    price(f);
+  }
+} // storeUnit
+
+function deleteUnit(f) {
+  let index = f.savedUnits.selectedIndex;
+if(0 > index) return;
+
+  let uName = f.savedUnits.options[index].value;
+  if('' < uName) {
+    delete unitArray[uName];
+    localStorage["unitArray"] = JSON.stringify(unitArray);
+    loadUnits();    
+  }
+} // deleteUnit
