@@ -7,12 +7,30 @@ require 'hcobb/head.inc';
 <meta content="utf-8" http-equiv="encoding">
 <title>TFT CP Calculator</title>
 <style type="text/css">
+.grid-container {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 10px;
+  padding: 10px;
+}
   textarea {
     color: black;
     background-color: #ffffb0 }
 input { text-align: left; }
+atblock {
+  float: left;
+}
+eqblock {
+  float: left;
+}
+smblock {
+  float: left;
+}
+.canload {
+display: none;
+}
 </style>
-<script src="js/tftcalc.js?v=4"></script>
+<script src="js/tftcalc.js?v=0.10"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
@@ -20,9 +38,12 @@ input { text-align: left; }
 <p>All page references are to <a href="https://thefantasytrip.game/">The Fantasy Trip</a> In the Labyrinth rulebook, unless noted otherwise.</p>
 <p>A collection of my own musings, not to be taken too seriously. <a href="http://www.hcobb.com/">-HJC</a></p>
 <p><b>CP</b> is hundreds of XPs to build the character up from zero attributes. Enter a valid character and it will show the CPs required.</p>
-<p><b>Format to text</b> and <b>Parse from text</b> ought to write (read) the <a href="http://www.sjgames.com/general/guidelines/authors/writing-thefantasytrip/">standard text format</a> into (from) the yellow box below, but struggle with equipment lists.</p>
-<form>
-Name: <input type="TEXT" name="Namef" size="80"><br>
+<p><b>Format to text</b> and <b>Parse from text</b> ought to write (read) the <a href="http://www.sjgames.com/general/guidelines/authors/writing-thefantasytrip/">standard text format</a> into (from) the yellow box below, but struggle with equipment lists. <a href="https://github.com/users/HenryJCobb/projects/1/views/1">Add other bugs here as you find them.</a></p>
+<form><input type="text" Id="eqjson" value="">
+<div class="grid-container">
+<div class="atblock">
+Name: <input type="TEXT" name="Namef" size="60">
+<div id="canload" class="canload"><button type="button" onclick="save_ch(this.form);">Save</button> Load: <select name="loadch"><option></option></select> <button type="button" onclick="export_ch(this.form);">Export All</button></div><br>
 <select name="racef" onchange="change_race(this.form);">
   <option>Human
   <option>Centaur
@@ -121,15 +142,7 @@ Spells: <input type="TEXT" name="SPf" size="80"><br>
 Languages: <input type="TEXT" name="LNf" size="80"><br>
 <select name="LNs">
   <option>-
-</select> <button type="button" onclick="add_language(this.form);">Add</button> <button type="button" onclick="del_language(this.form);">Delete</button><br>
-<table>
-  <tr><th>Weapons</th><td><input type="TEXT" name="WPf" size="80"></td></tr>
-  <tr><th>Armor</th><td><input type="TEXT" name="ARf" size="80"></td></tr>
-  <tr><th>Equipment</th><td><input type="TEXT" name="EQf" size="80"></td></tr>
-  <tr><th>Magic Items</th><td><input type="TEXT" name="MIf" size="80"></td></tr>
-  </table>
-<br>
-<br>
+</select> <button type="button" onclick="add_language(this.form);">Add</button> <button type="button" onclick="del_language(this.form);">Delete</button><br><br>
 <a href="" title="Atribute Points are the sum of ST+DX+IQ">AP:</a><input type="TEXT" name="APf" size="3">,
 <a href="" title="Memory Points are the total cost of all talents, spells, and languages">MP:</a><input type="TEXT" name="MPf" size="4">,
 <a href="" title="The minimum number of eXPerience points required to gain all of these abilities, assuming the character started with this IQ level">XP:</a><input type="TEXT" name="XPf" size="10">,
@@ -140,9 +153,20 @@ Languages: <input type="TEXT" name="LNf" size="80"><br>
 <button type="button" onclick="random_gear(this.form);">Random gear</button><br>
 <textarea id="statblock" name="statblock" rows="20" cols="80">
 </textarea>
+  </div>
+    <div class="eqblock">
+<table id="eqt" border="1">
+  <tr><th>Qty</th><th>Item</th><th>Cost</th><th>Weight</th></tr>
+    <tr><th><button type="button" onclick="add_gear(this.form);">Add</button></th><th>Sums</th><th>$<input type="text" name="eqtc" readonly size="8"></th><th><input type="text" name="eqtw" readonly size="6">#</th></tr>  
+  </table>
+  </div>
+  </div>
 </form>
 <hr>
     <p>The Fantasy Trip(t.m.) is a trademark of Steve Jackson Games, and their rules and art are copyrighted by Steve Jackson Games. All rights are reserved by Steve Jackson Games.<br>
 This game aid is the original creation of <a href="http://www.hcobb.com/">Henry J. Cobb</a> and is released for free distribution, and not for resale, under the permissions granted in the <a href="http://www.sjgames.com/general/online_policy.html">Steve Jackson Games Online Policy</a>.</p>
+<script LANGUAGE="JavaScript1.1">
+if(canstore()) document.getElementById("canload").style.display = "block";
+</script>
 </body>
 </html>
