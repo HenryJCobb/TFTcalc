@@ -30,7 +30,7 @@ smblock {
 display: none;
 }
 </style>
-<script src="js/tftcalc.js?v=0.10"></script>
+<script src="js/tftcalc.js?v=0.14"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
@@ -38,8 +38,8 @@ display: none;
 <p>All page references are to <a href="https://thefantasytrip.game/">The Fantasy Trip</a> In the Labyrinth rulebook, unless noted otherwise.</p>
 <p>A collection of my own musings, not to be taken too seriously. <a href="http://www.hcobb.com/">-HJC</a></p>
 <p><b>CP</b> is hundreds of XPs to build the character up from zero attributes. Enter a valid character and it will show the CPs required.</p>
-<p><b>Format to text</b> and <b>Parse from text</b> ought to write (read) the <a href="http://www.sjgames.com/general/guidelines/authors/writing-thefantasytrip/">standard text format</a> into (from) the yellow box below, but struggle with equipment lists. <a href="https://github.com/users/HenryJCobb/projects/1/views/1">Add other bugs here as you find them.</a></p>
-<form><input type="text" Id="eqjson" value="">
+<p><b>Format to text</b> and <b>Parse from text</b> ought to write (read) the <a href="http://www.sjgames.com/general/guidelines/authors/writing-thefantasytrip/">standard text format</a> into (from) the yellow box below, but struggle with equipment lists. You can also copy and paste in a Roll20 TFT character sheet. <a href="https://github.com/users/HenryJCobb/projects/1/views/1">Add other bugs here as you find them.</a></p>
+<form>
 <div class="grid-container">
 <div class="atblock">
 Name: <input type="TEXT" name="Namef" size="60">
@@ -155,9 +155,45 @@ Languages: <input type="TEXT" name="LNf" size="80"><br>
 </textarea>
   </div>
     <div class="eqblock">
-<table id="eqt" border="1">
-  <tr><th>Qty</th><th>Item</th><th>Cost</th><th>Weight</th></tr>
-    <tr><th><button type="button" onclick="add_gear(this.form);">Add</button></th><th>Sums</th><th>$<input type="text" name="eqtc" readonly size="8"></th><th><input type="text" name="eqtw" readonly size="6">#</th></tr>  
+      <table id="eqt" border="1">
+        <colgroup>
+    <col span="1">
+    <col span="1" style="visibility: collapse">
+        <col span="6">
+  </colgroup>
+        <thead>
+          <tr><th>Qty</th><th>Category</th><th>Item</th><th>Material</th><th>Quality</th><th>Magic</th><th>Cost</th><th>Weight</th></tr>
+        </thead>
+        <tbody>
+        </tbody>
+        <tfoot>
+          <tr><th colspan="6">Totals</th><th>$<input type="text" name="eqtc" readonly size="8"></th><th><input type="text" name="eqtw" readonly size="6">#</th></tr>
+  <tr style="height:60px">
+    <th colspan="8"><input type="hidden" id="gearselect" name="gearselect" value="-1"><button type="button" onclick="add_gear(this.form);">Add</button>
+      <input type="number" id="gearqty" name="gearqty" min="1" max="100" value="1"/>
+      <select name="gearcat" onchange="gear_cat(this.form);"> 
+        <option></option>
+        <option>Item</option>
+        <option>Potion</option>
+        <option>Weapon</option>
+        <option>Armor</option>
+        <option>Shield</option>
+      </select>
+<select name="gearthing" onchange="gear_thing(this.form);" style="display: none">
+  <option></option>
+  </select>
+<select name="gearmaterial" style="display: none">
+  <option></option>
+  </select>
+<select name="gearbalance" style="display: none">
+  <option></option>
+  </select>
+<select name="gearfine" style="display: none">
+  <option></option>
+  </select>
+      </th>
+  </tr>
+  </tfoot>
   </table>
   </div>
   </div>
