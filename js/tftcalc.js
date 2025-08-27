@@ -2,6 +2,13 @@
 //     <p>The Fantasy Trip(t.m.) is a trademark of Steve Jackson Games, and their rules and art are copyrighted by Steve Jackson Games. All rights are reserved by Steve Jackson Games.<br>
 // This game aid is the original creation of <a href="http://www.hcobb.com/">Henry J. Cobb</a> and is released for free distribution, and not for resale, under the permissions granted in the <a href="http://www.sjgames.com/general/online_policy.html">Steve Jackson Games Online Policy</a>.</p>
 
+function capInt(val, cap) {
+  let v = parseInt(val);
+  let c = parseInt(cap);
+  if(v > c) v = c;
+  return v;
+}
+
 function load_options(f,opts) {
     f.style.display = 'none';
   let len = f.options.length;
@@ -886,73 +893,68 @@ materials["W"] = "Wood";
 
 // Name, 0:talent 1:txt_dam 2:Hands 3:min_st 4:avg_dam 5:cost 6:wt 7:material
 var weapons = {};
-weapons["torch"] = ["","1d-2","1",0,1.7,1,0.5,"W"];
-weapons["brand"] = ["","1d-2","1",0,1.7,60,0.5,"W"];
-weapons["club"] = ["Staff","1d-1","1",0,2.5,10,3.0,"W"];
-weapons["crowbar"] = ["","1d+2","2",12,5.5,10,4.0,"I"];
-weapons["maul"] = ["Staff","1d","1",0,3.5,20,5.0,"W"];
-weapons["wand"] = ["Staff","","1",0,0,0,0.0,"W"];
-weapons["cane"] = ["","1d-2","1",0,1.7,20,3.0,"W"];
-
-weapons["dagger"] = ["Knife","1d-1","T",0,2.5,10,0.2,"I"];
-weapons["rapier"] = ["Sword","1d","1",9,3.5,40,1,"I"];
-weapons["saber"] = ["Sword","2d-2","1",10,5.0,50,3,"I"];
-weapons["shortsword"] = ["Sword","2d-1","1",11,6.0,60,4,"I"];
-weapons["broadsword"] = ["Sword","2d","1",12,7.0,80,5,"I"];
+weapons["arquebus"] = ["Guns","3d+3","M",8,7.0,500,12,"I"];
 weapons["bastard sword"] = ["Sword","2d+1/3d-2","1",13,8.0,100,7,"I"];
-weapons["2-handed sword"] = ["Sword","3d-1","2",14,9.5,120,10,"I"];
-weapons["great sword"] = ["Sword","3d+1","2",16,11.5,150,15,"I"];
-
-weapons["hatchet"] = ["Axe/Mace","1d","T",9,3.5,15,2,"I"];
-weapons["hammer"] = ["Axe/Mace","1d+1","T",10,4.5,25,4,"I"];
-weapons["mace"] = ["Axe/Mace","2d-1","T",11,6.0,40,6,"I"];
-weapons["small ax"] = ["Axe/Mace","1d+2","T",11,5.5,30,5,"I"];
-weapons["war ax"] = ["Axe/Mace","2d","1",12,7.0,60,8,"I"];
-weapons["pick"] = ["Axe/Mace","2d","2",13,7.0,50,8,"I"];
-weapons["morningstar"] = ["Axe/Mace","2d+1","1",13,8.0,100,12,"I"];
-weapons["great hammer"] = ["Axe/Mace","2d+2","2",14,9.0,110,16,"I"];
 weapons["battle axe"] = ["Axe/Mace","3d","2",15,10.5,130,22,"I"];
-
-weapons["javelin"] = ["Pole Weapons","1d-1","T",9,3.0,20,3,"I"];
-weapons["trident"] = ["Net and Trident","1d","T",10,3.5,30,4,"I"];
-weapons["spear"] = ["Pole Weapons","1d/1d+1","T",11,4.0,40,6,"I"];
-weapons["halberd"] = ["Pole Weapons","2d","2",13,7.5,70,16,"I"];
-weapons["pike ax"] = ["Pole Weapons","2d+2","2",15,9.5,100,22,"I"];
-
-weapons["quarterstaff"] = ["Quarterstaff","1d+2","2",11,5.5,20,5,"W"];
-
-weapons["sling"] = ["Bow","1d-2","M",0,1.0,2,1,"R"];
-weapons["small bow"] = ["Bow","1d-1","M",9,2.5,20,4,"W"];
-weapons["horse bow"] = ["Bow","1d","M",10,3.5,30,4,"W"];
-weapons["longbow"] = ["Bow","1d+2","M",11,5.5,40,4,"W"];
-weapons["light crossbow"] = ["Crossbow","2d","M",12,7.0,50,6,"I"];
-weapons["heavy crossbow"] = ["Crossbow","3d","M",15,10.5,80,10,"I"];
-weapons["net"] = ["Net and Trident","1d-3","T",10,3.5,40,2,"I"];
-weapons["whip"] = ["Whip","1d-1","T",8,2.5,30,1,"L"];
-weapons["lasso"] = ["Lasso","1d+2","T",8,5.5,10,1,"R"];
-weapons["boomerang"] = ["Boomerang","2d-1","T",11,6.0,20,3,"W"];
-weapons["nunchuks"] = ["Nunchuks","1d+1","1",9,4.5,35,4,"I"];
-weapons["spear thrower-javelin"] = ["Spear Thrower","1d+1","T",9,4.5,35,5,"W"];
-weapons["spear thrower-spear"] = ["Spear Thrower","1d+2","T",11,5.5,55,8,"W"];
 weapons["blowgun"] = ["Blowgun","pos","M",0,2.5,15,1,"I"];
 weapons["bola"] = ["Bola","spe","T",9,5.5,15,1,"R"];
+weapons["boomerang"] = ["Boomerang","2d-1","T",11,6.0,20,3,"W"];
+weapons["brand"] = ["","1d-2","1",0,1.7,60,0.5,"W"];
+weapons["broadsword"] = ["Sword","2d","1",12,7.0,80,5,"I"];
+weapons["cane"] = ["","1d-2","1",0,1.7,20,3.0,"W"];
+weapons["club"] = ["","1d-1","1",0,2.5,10,3.0,"W"];
+weapons["crowbar"] = ["","1d+2","2",12,5.5,10,4.0,"I"];
+weapons["dagger"] = ["Knife","1d-1","T",0,2.5,10,0.2,"I"];
+weapons["great hammer"] = ["Axe/Mace","2d+2","2",14,9.0,110,16,"I"];
+weapons["great sword"] = ["Sword","3d+1","2",16,11.5,150,15,"I"];
+weapons["halberd"] = ["Pole Weapons","2d","2",13,7.5,70,16,"I"];
+weapons["hammer"] = ["Axe/Mace","1d+1","T",10,4.5,25,4,"I"];
+weapons["hatchet"] = ["Axe/Mace","1d","T",9,3.5,15,2,"I"];
+weapons["heavy crossbow"] = ["Crossbow","3d","M",15,10.5,80,10,"I"];
+weapons["horse bow"] = ["Bow","1d","M",10,3.5,30,4,"W"];
+weapons["javelin"] = ["Pole Weapons","1d-1","T",9,3.0,20,3,"I"];
+weapons["lasso"] = ["Lasso","1d+2","T",8,5.5,10,1,"R"];
+weapons["light crossbow"] = ["Crossbow","2d","M",12,7.0,50,6,"I"];
+weapons["longbow"] = ["Bow","1d+2","M",11,5.5,40,4,"W"];
+weapons["mace"] = ["Axe/Mace","2d-1","T",11,6.0,40,6,"I"];
+weapons["maul"] = ["","1d","1",0,3.5,20,5.0,"W"];
+weapons["morningstar"] = ["Axe/Mace","2d+1","1",13,8.0,100,12,"I"];
+weapons["net"] = ["Net and Trident","1d-3","T",10,3.5,40,2,"I"];
+weapons["nunchuks"] = ["Nunchuks","1d+1","1",9,4.5,35,4,"I"];
+weapons["pick"] = ["Axe/Mace","2d","2",13,7.0,50,8,"I"];
+weapons["pike ax"] = ["Pole Weapons","2d+2","2",15,9.5,100,22,"I"];
+weapons["quarterstaff"] = ["Quarterstaff","1d+2","2",11,5.5,20,5,"W"];
+weapons["rapier"] = ["Sword","1d","1",9,3.5,40,1,"I"];
+weapons["saber"] = ["Sword","2d-2","1",10,5.0,50,3,"I"];
 weapons["sha-ken"] = ["Sha-ken","1d-2","T",0,1.7,3,1,"I"];
-weapons["arquebus"] = ["Guns","3d+3","M",8,7.0,500,12,"I"];
+weapons["shortsword"] = ["Sword","2d-1","1",11,6.0,60,4,"I"];
+weapons["sling"] = ["Bow","1d-2","M",0,1.0,2,1,"R"];
+weapons["small ax"] = ["Axe/Mace","1d+2","T",11,5.5,30,5,"I"];
+weapons["small bow"] = ["Bow","1d-1","M",9,2.5,20,4,"W"];
+weapons["spear thrower-javelin"] = ["Spear Thrower","1d+1","T",9,4.5,35,5,"W"];
+weapons["spear thrower-spear"] = ["Spear Thrower","1d+2","T",11,5.5,55,8,"W"];
+weapons["spear"] = ["Pole Weapons","1d/1d+1","T",11,4.0,40,6,"I"];
+weapons["torch"] = ["","1d-2","1",0,1.7,1,0.5,"W"];
+weapons["trident"] = ["Net and Trident","1d","T",10,3.5,30,4,"I"];
+weapons["2-handed sword"] = ["Sword","3d-1","2",14,9.5,120,10,"I"];
+weapons["wand"] = ["","","1",0,0,0,0.0,"W"];
+weapons["war ax"] = ["Axe/Mace","2d","1",12,7.0,60,8,"I"];
+weapons["whip"] = ["Whip","1d-1","T",8,2.5,30,1,"L"];
 
 // Name 0:stops 1:DX 2:cost 3:weight 4:human ma 5:elf ma 6:material
 var armors ={};
-armors["lower-class clothes"] = [0,0,10,0,10,12,"F"];
 armors["apprentice robes"] = [0,0,50,0,10,12,"F"];
-armors["middle-class clothes"] = [0,0,50,0,10,12,"F"];
-armors["upper-class clothes"] = [0,0,200,0,10,12,"F"];
-armors["silken robes"] = [0,0,200,0,10,12,"K"];
-armors["cloth armor"] = [1,-1,50,14,10,12,"F"];
-armors["leather armor"] = [2,-2,100,16,8,10,"L"];
 armors["chainmail"] = [3,-3,200,30,6,6,"I"];
-armors["half plate"] = [4,-4,300,45,6,6,"I"];
-armors["plate armor"] = [5,-5,500,55,6,6,"I"];
-armors["water armor"] = [3,-1,1000,14,10,12,"F"];
+armors["cloth armor"] = [1,-1,50,14,10,12,"F"];
 armors["fine plate"] = [6,-4,5000,55,6,6,"I"];
+armors["half plate"] = [4,-4,300,45,6,6,"I"];
+armors["leather armor"] = [2,-2,100,16,8,10,"L"];
+armors["lower-class clothes"] = [0,0,10,0,10,12,"F"];
+armors["middle-class clothes"] = [0,0,50,0,10,12,"F"];
+armors["plate armor"] = [5,-5,500,55,6,6,"I"];
+armors["silken robes"] = [0,0,200,0,10,12,"K"];
+armors["upper-class clothes"] = [0,0,200,0,10,12,"F"];
+armors["water armor"] = [3,-1,1000,14,10,12,"F"];
 
 // Name 0:stops 1:DX 2:cost 3:weight 4:notes 5:material
 var shields = {};
@@ -963,64 +965,63 @@ shields["tower shield"] = [3,-2,70,35.0,"","W"];
 
 // Name 0:Cost 1:wt 2:cat 3:material
 var items = {};
+items["10-yard rope ladder"] = [50,4.0,"U","R"];
 items["arrow"] = [1,0.05,"M","I"];
 items["backpack"] = [40,4.0,"P","L"];
 items["belt pouch"] = [5,0.5,"P","L"];
 items["book"]  = [5,1.0,"M","P"];
 items["coin"] = [0.1,0.01,"M","I"];
+items["collapsible 6-foot pole"] = [5,2.0,"M","W"];
+items["empty skin"]  = [3,0.2,"M","L"];
 items["gem"]  = [50,0.01,"R","*"];
 items["jewel"]  = [1000,0.01,"R","*"];
 items["labyrinth kit"] = [30,6,"U","F"];
 items["medium bag"] = [20,2.0,"P","F"];
-items["small bag"] = [1,0.25,"P","F"];
 items["molotail"] = [20,2.0,"M","*"];
 items["physicker’s kit"] = [50,4.0,"T","W"];
 items["pointer necklace"]  = [150,0.1,"U","S"];
-items["collapsible 6-foot pole"] = [5,2.0,"M","W"];
 items["quarrel"] = [1,0.05,"M","I"];
 items["ration"] = [5,1.0,"M","B"];
-items["yard rope"] = [.2,0.12,"U","R"];
-items["10-yard rope ladder"] = [50,4.0,"U","R"];
 items["silver ring"] = [50,0.01,"R","S"];
-items["empty skin"]  = [3,0.2,"M","L"];
 items["small backpack"] = [30,3.0,"P","L"];
+items["small bag"] = [1,0.25,"P","F"];
 items["small silver mirror"]  = [200,1.0,"M","S"];
 items["waterskin"]  = [3,2.0,"M","L"];
 items["wineskin"]  = [5,2.0,"M","L"];
 items["wizard’s chest"] = [2500,10.0,"W","W"];
+items["yard rope"] = [.2,0.12,"U","R"];
 
 // Name 0: C or A, 1: isBomb?, 2: cost
 var potions = {};
+potions["acute hearing potion"] = ["A",false,250];
 potions["berserker potion"] = ["C",false,200];
+potions["contact poison"] = ["A",false,2500];
 potions["corrosive poison"] = ["C",true,500];
+potions["dark vision potion"] = ["A",false,500];
 potions["decrease dx potion"] = ["C",true,80];
 potions["decrease iq potion"] = ["C",true,200];
 potions["decrease st potion"] = ["C",true,100];
+potions["fear potion"] = ["A",true,150];
+potions["fireproofing potion"] = ["A",false,250];
 potions["fish poison"] = ["C",false,250];
+potions["flight potion"] = ["A",false,1200];
 potions["gunpowder charge"] = ["C",false,100];
+potions["healing potion"] = ["A",false,150];
+potions["imprisonment potion"] = ["A",false,1000];
 potions["increase dx potion"] = ["C",false,600];
 potions["increase iq potion"] = ["C",false,600];
 potions["increase st potion"] = ["C",false,450];
 potions["insect poison"] = ["C",true,150];
+potions["invisibility potion"] = ["A",false,1500];
 potions["mammal poison"] = ["C",true,250];
 potions["plant poison"] = ["C",true,200];
+potions["pyrotic ability potion"] = ["A",false,500];
 potions["reptile poison"] = ["C",true,100];
+potions["revival potion"] = ["A",false,65000];
 potions["simple poison"] = ["C",true,120];
 potions["sleeping potion"] = ["C",true,150];
 potions["slime poison"] = ["C",true,50];
 potions["smell booster potion"] = ["C",false,200];
-potions["weapon poison"] = ["C",false,200];
-potions["acute hearing potion"] = ["A",false,250];
-potions["contact poison"] = ["A",false,2500];
-potions["dark vision potion"] = ["A",false,500];
-potions["fear potion"] = ["A",true,150];
-potions["fireproofing potion"] = ["A",false,250];
-potions["flight potion"] = ["A",false,1200];
-potions["healing potion"] = ["A",false,150];
-potions["imprisonment potion"] = ["A",false,1000];
-potions["invisibility potion"] = ["A",false,1500];
-potions["pyrotic ability potion"] = ["A",false,500];
-potions["revival potion"] = ["A",false,65000];
 potions["speed potion"] = ["A",false,1000];
 potions["telekenisys potion"] = ["A",false,500];
 potions["telepathy potion"] = ["A",false,1500];
@@ -1028,9 +1029,10 @@ potions["treasure-smelling potion"] = ["A",false,250];
 potions["universal antidote"] = ["A",false,2500];
 potions["universal solvent"] = ["A",false,2000];
 potions["water breathing potion"] = ["A",false,500];
+potions["weapon poison"] = ["C",false,200];
 potions["youth potion"] = ["A",false,40000];
 
-var woodvalues = {ash:1, aspen:1, beech:1, bone:2, cedar:1, cypress:1, ebony:4, elm:1, fir:1, hawthorn:1, hazel:1, holly:1, ivory:10, larch:1, laurel:1, maple:1, oak:1, pine:1, redwood:1, spruce:1, willow:1, yew:1};
+var woodvalues = {"": 1, ash:1, aspen:1, beech:1, bone:2, cedar:1, cypress:1, ebony:4, elm:1, fir:1, hawthorn:1, hazel:1, holly:1, ivory:10, larch:1, laurel:1, maple:1, oak:1, pine:1, redwood:1, spruce:1, willow:1, yew:1};
 
 function randomwood() {
     let keys = Object.keys(woodvalues);
@@ -1222,8 +1224,8 @@ function sort_things(ary) {
 class TFTWeapon extends Thing {
   calc_dam() {
     let daa = this.row[1].split("d");
-    this.ddice = daa[0];
-    this.dadds = daa[1];
+    this.ddice = parseInt(daa[0]);
+    this.dadds = parseInt(daa[1]);
     this.dxadj = 0;
     if(10 == this.balanced) this.dxadj = 1;
     if(10 == this.fine) this.dadds -= -1;
@@ -1242,9 +1244,18 @@ class TFTWeapon extends Thing {
     return this.row[3];
   }
   
-  talentchk(mytal) {
+  talentchk(person) {
+    if(("maul" === this.name) || ("club" === this.name) || ("crowbar" === this.name)) {
+      let pnch = person.base_punch();
+      this.ddice = pnch[0];
+      this.dadds = pnch[1] + 3;
+      if("maul" === this.name) this.dadds = pnch[1] + 4;
+      this.avg = 3.5* this.ddice -(-this.dadds);
+      return true;
+    }
+    let mytal = person.talents;
     let tal = this.talent;
-    if("" === tal) return false;
+    if("" === tal) return true;
     if(!(tal in mytal)) return false;
     if("Knife" === tal) tal = "Dagger";
     let isExpert = false;
@@ -1900,6 +1911,24 @@ class Person {
     this.bonl = {};
     this.spells = {};
   }
+
+  base_punch() {
+    let dice = 1;
+    let plus = -4;
+    if(this.ST > 30) {
+      plus = 1;
+      dice = Math.floor((this.ST-11)/10);
+    } else if(this.ST > 24) {
+      plus = 3;
+    } else if(this.ST > 20) {
+      plus = 2;
+    } else if(this.ST > 16) {
+      plus = 1;
+    } else if(this.ST > 8) {
+      plus = Math.floor((this.ST-7)/2) -4;
+    }
+    return [dice,plus];
+  }
   
   unarmed() {
     if("Gargoyle" === this.race.name) return "Stony hands (2d)";
@@ -1920,22 +1949,9 @@ class Person {
       punchmod = 1;
     }
 
-    let dice = 1;
-    let plus = -4;
-    if(this.ST > 30) {
-      plus = 1;
-      dice = Math.floor((this.ST-11)/10);
-    } else if(this.ST > 24) {
-      plus = 3;
-    } else if(this.ST > 20) {
-      plus = 2;
-    } else if(this.ST > 16) {
-      plus = 1;
-    } else if(this.ST > 8) {
-      plus = Math.floor((this.ST-7)/2) -4;
-    }
-    plus += punchmod;
-    dice += punchdice;
+    let p = this.base_punch();
+    let plus = p[1] + punchmod;
+    let dice = p[0] + punchdice;
     let result = "";
     if("Reptile Person" === this.race.name) {
       plus += 2;
@@ -2022,7 +2038,6 @@ class Person {
   }
 
   parseWeapons(string) {
-    this.weapons = [];
     let ary = string.split(",");
     let wepexp = new RegExp(Object.keys(weapons).join("|"), "gi");
     let tmp = Object.keys(enchantments).join("|").replace(/\u002B/g, "\\+");
@@ -2038,8 +2053,7 @@ class Person {
         } else if(ary[j].match(/fine/i)) {
           testwp.makeFine();
         }
-        
-        this.weapons.push(testwp);
+        this.equipment.push(testwp);
       }
     }
   }
@@ -2077,7 +2091,6 @@ class Person {
   }
 
   parseEquipment(inp) {
-    this.equipment = [];
     if('' === inp) return;
     let ary = inp.split(",");
 
@@ -2111,6 +2124,7 @@ class Person {
         for(let n in potions) {
           if(teststr.includes(n)) {
             gear = new Thing("Potion",n,qty);
+            this.equipment.push(gear);
             break;
           }
         }
@@ -2124,7 +2138,8 @@ class Person {
 
       if(!gear) for(let n in weapons) {
         if(teststr.includes(n)) {
-          gear = new TFTWeapon(n,qty,modlist,ench);
+          gear = new TFTWeapon(n,qty,mat,modlist,ench);
+          this.equipment.push(gear);
           break;
         }
       }
@@ -2132,6 +2147,8 @@ class Person {
       if(!gear) for(let n in armors) {
         if(teststr.includes(n)) {
           gear = new Armor(n,this.size,qty,mat,modlist,ench);
+          this.equipment.push(gear);
+          this.armor = gear;
           break;
         }
       }
@@ -2139,6 +2156,8 @@ class Person {
       if(!gear) for(let n in shields) {
         if(teststr.includes(n)) {
           gear = new Shield(n,qty,mat,modlist,ench);
+          this.equipment.push(gear);
+          this.shield = gear;
           break;
         }
       }
@@ -2146,20 +2165,16 @@ class Person {
       if(!gear) for(let n in items) {
         if(teststr.includes(n)) {
           gear = new Thing("Item",n,qty,mat,modlist,ench);
+          this.equipment.push(gear);
           break;
         }
       }
 
       if(null == gear) {
         console.log("Found no equipment match for {" + teststr + "}");
-      } else {
-        this.equipment.push(gear);
       }
     }
   } // parseEquiment
-
-  parseItems(string) {
-  }
   
   sortTalents(trimList) {
     let excludes = false;
@@ -2269,18 +2284,28 @@ class Person {
     this.protections = {};
     this.totprot = 0;
 
-    this.weapons = [];
+    this.weapon = null;
+    this.armor = null;
+    this.shield = null;
     this.equipment = [];
     this.magicitems = [];
 
     let erows =  document.getElementById("eqt").getElementsByTagName('tbody')[0].children;
     for (var r = 0, n = erows.length; r < n; r++) {
       let gear = row2gear(erows[r]);
-      if("Weapon" === gear.category) {
-        this.weapons.push(gear);
-      } else {
-        this.equipment.push(gear);
+      switch(gear.category) {
+      case "Weapon":
+        if(!this.weapon) this.weapon = gear;
+        break;
+      case "Armor":
+        if(!this.armor) this.armor = gear;
+        break;
+      case "Shield":
+        if(!this.shield) this.shield = gear;
+      default:
+        break;
       }
+      this.equipment.push(gear);
       this.budget += gear.value;
       this.load += gear.weight;
     }
@@ -2289,19 +2314,12 @@ class Person {
     if("Running" in this.talents) MAadj = 2;
     this.MA = this.race.MA(MAadj);
     this.adjMA = this.MA;
-    if("Toughness" in this.talents) {
-      if("Toughness II" in this.talents) {
-        this.protections["Toughness II"] = 2;
-        this.totprot -= -2;
-      } else {
-        this.protections["Toughness"] = 1;
-        this.totprot -= -1;
-      }
-    }
   }
 
   // Push a person onto a form
   toForm(form) {
+    // console.log(" Total equipment: " + this.equipment.length);
+     
     form.Namef.value = this.charname;
     form.Agef.value = this.charage;
     if(this.race.name !== form.racef.value) {
@@ -2375,20 +2393,10 @@ class Person {
       MP++;
     }
 
-    let gearFields = {
-      WPf: "weapons",
-//      ARf: "armor",
-      EQf: "equipment",
-      MIf: "magicitems"
-    };
-
     let itar = [];
 
-    for(let fld in gearFields) {      
-      let prop = gearFields[fld];
-      for(let it in this[prop]) {
-        gear2row(this[prop][it]);
-      }
+    for(let it in this.equipment) {
+        gear2row(this.equipment[it]);
     }
     
     if(MP > this.IQ) XP += 500 * (MP - this.IQ);
@@ -2474,6 +2482,10 @@ class Person {
     this.spells = {};
     this.budget = 1000;
     this.charage = 20;
+      this.equipment = [];
+    delete this.weapon;
+      delete this.armor;
+      delete this.shield;
 
     if(input.startsWith("Character Sheet")) {
       this.fromRoll20(input);
@@ -2566,10 +2578,7 @@ class Person {
       let parsefunc = {
         parseTalents: /skills|talent|language/gi,
         parseSpells: /spell/gi,
-        parseWeapons: /weapon/gi,
-        parseArmor: /armor/gi,
-        parseEquipment: /equipment/gi,
-        parseItems: /magic item/gi
+        parseEquipment: /weapon|armor|equipment|magic item/gi,
       };
       buff = buff.replaceAll(".","");
       for(let fun in parsefunc) {
@@ -2669,7 +2678,7 @@ class Person {
       let tocarry = randfrac(maxload - this.load);
       if(testwp.value > tospend) continue;
       if(testwp.weight > tocarry) continue;
-      if(!testwp.talentchk(this.talents)) continue;
+      if(!testwp.talentchk(this)) continue;
       if((rolldice(3) > this.DX) && ((10 * testwp.value) < tospend)) testwp.makeBalanced();
       if((10 * testwp.value) < tospend) {
         if((20 * testwp.value) < tospend) {
@@ -2712,7 +2721,7 @@ class Person {
         staffspell = "";
       }
       if(0 < weap.enchant.length) this.magicitems.push(weap);
-      this.weapons.push(weap);
+      this.equipment.push(weap);
       this.budget -= weap.value;
       this.load -= -weap.weight;
     }
@@ -2727,7 +2736,7 @@ class Person {
       weap.make_staff(staffspell,this.mana);
       staffspell = "";
       mywp["Staff"] = weap;
-      this.weapons.push(weap);
+      this.equipment.push(weap);
       this.magicitems.push(weap);
       this.budget -= weap.value;
       this.load -= -weap.weight;
@@ -2864,26 +2873,25 @@ class Person {
       case "A":
         if(!"armor" in this) continue;
         this.armor.push_enchantment(enc);
-        this.armor.value += enc.value;
+        this.armor.value -= -enc.value;
         this.budget -= enc.value;
         break;
       case "R":
         thng = new Thing("Item","silver ring",1);
         thng.push_enchantment(enc);
-        thng.value += enc.value;
+        thng.value -= -enc.value;
         this.magicitems.push(thng);
         this.budget -= thng.value;
         this.load -= -thng.weight;
         break;
       case "W":
-        if(0 == this.weapons.length) continue;
-        let weap = this.weapons[0];
-        weap.push_enchantment(enc);
-        weap.value += enc.value;
+        if(!this.weapon) continue;
+        this.weapon.push_enchantment(enc);
+        this.weapon.value -= -enc.value;
         this.budget -= enc.value;
         break;
       default:
-        if(0 < this.weapons.length) thng = this.weapons[0];
+        if(this.weapon) thng = this.weapon;
         if("armor" in this) thng = this.armor;
         if("shield" in this) thng = this.shield;
         if("" === thng) {
@@ -2896,7 +2904,6 @@ class Person {
         thng.value -= -enc.value;
         if(!this.magicitems.includes(thng)) this.magicitems.push(thng);
         break;
-      
       }
     }
 
@@ -2918,6 +2925,93 @@ class Person {
   }
 
   format_stats() {
+    this.adjDX = this.DX;
+    this.adjMA = this.MA;
+    this.load = 0;
+    sort_things(this.equipment);
+    let eq = [];
+    let wpar = [];
+    for(let i = 0; i < this.equipment.length; i++) {
+      let gear = this.equipment[i];
+      this.load += gear.weight;
+      switch(gear.category) {
+      case "Weapon":
+        if(!this.weapon) this.weapon = gear;
+        let wstr = "";
+        if(!gear.talentchk(this)) wstr = "untalented ";
+        wstr += gear.listname(); 
+        wpar.push(wstr);
+        break;
+      case "Armor":
+        if(!this.armor) this.armor = gear;
+        break;
+      case "Shield":
+        if(!this.shield) this.shield = gear;
+        break;
+      default:
+      eq.push(this.equipment[i].fullname());
+      break;
+      }
+    }
+    let es = eq.join(", ");
+
+    this.totprot = 0;
+    this.protections = [];
+    if("Toughness" in this.talents) {
+      if("Toughness II" in this.talents) {
+        this.protections["Toughness II"] = 2;
+        this.totprot -= -2;
+      } else {
+        this.protections["Toughness"] = 1;
+        this.totprot -= -1;
+      }
+    }
+    if(this.armor) {
+      this.protections[this.armor.listname()] = this.armor.stops;
+      this.totprot -= -this.armor.stops;
+      this.adjDX -= -this.armor.DXa;
+      let speedAdj = this.armor.row[4];
+      if(10 != speedAdj) {
+        if(8 == speedAdj) {
+          this.adjMA -= 2;
+        } else {
+          this.adjMA = capInt(this.adjMA,speedAdj);
+        }
+      }
+    }
+    if(this.shield) {
+      let prot = this.shield.stops;
+      let sname = this.shield.listname();
+      if("Shield Expertise" in this.talents) {
+        prot += 1;
+        sname += " (-1 to be hit)"
+      }
+      this.protections[sname] = prot;
+      this.totprot -= -prot;
+    }
+
+    let carryST = 1.0 * this.ST;
+    if("Dwarf" === this.race.name) carryST *= 2;
+    let encm = this.load / carryST;
+    if(4.0 < encm) {
+      if(6.0 < encm) {
+        if(8.0 < encm) {
+          if(10.0 < encm) {
+            this.adjMA = 0;
+            this.adjDX = 0;
+          } else {
+            this.adjMA = capInt(this.adjMA,4);
+            this.adjDX -= 2;
+          }
+        } else {
+          this.adjMA = capInt(this.adjMA,6);
+          this.adjDX -= 1;
+        }
+      } else {
+        this.adjMA = capInt(this.adjMA,8);
+      }
+    }
+
     let result = this.charname +", " +this.race.name;
     if(this.wiz) result += " wizard";
     result += ", age "+this.charage+"\n";
@@ -2966,10 +3060,6 @@ class Person {
       result += ll +"\n";
     }
 
-    let wpar = [];
-    for(let wep in this.weapons) {
-      wpar.push(this.weapons[wep].listname());
-    }
     let wpstr = wpar.join(", ");
     if("" !== wpstr) {
       if(wpstr.includes(",")) {
@@ -2983,29 +3073,26 @@ class Person {
     result += "Attacks and Damage: "+this.unarmed()+"\n";
     result += "Special Ability/Weakness: \n";
     result += "Armor:";
-    if(0 < this.totprot) {
-      let armstr = "";
-      for (let key in this.protections) armstr += key +", ";
-      armstr = armstr.substring(0, armstr.length - 2);
-      let lastIndex = armstr.lastIndexOf(", ");
-      let stopstr = "stops"
-      if(-1 != lastIndex) {
-        stopstr = "stop"
-        let beginString = armstr.substring(0, lastIndex);
-        let endString = armstr.substring(lastIndex + 2);
-        armstr = beginString + ", and " +endString;
+    let armstr = "";
+
+    for (let key in this.protections) armstr += key +", ";
+    armstr = armstr.substring(0, armstr.length - 2);
+    let lastIndex = armstr.lastIndexOf(", ");
+    let stopstr = "stops"
+    if(-1 != lastIndex) {
+      stopstr = "stop"
+      let beginString = armstr.substring(0, lastIndex);
+      let endString = armstr.substring(lastIndex + 2);
+      armstr = beginString + ", and " +endString;
       }
-      armstr = armstr.charAt(0).toUpperCase() + armstr.slice(1);
-      result += " " +armstr + " " +stopstr + " "+ this.totprot +" hit";
-      if(1 < this.totprot) result += "s";
-    }
-    result += "\n";
-    sort_things(this.equipment);
-    let eq = [];
-    for(let i = 0; i < this.equipment.length; i++) eq.push(this.equipment[i].fullname());
-    let es = eq.join(", ");
-    result += "Equipment: "+es+"\n";
-    if(0 < this.magicitems.length) {
+    armstr = armstr.charAt(0).toUpperCase() + armstr.slice(1);
+    result += " " +armstr;
+    if(0 < this.totprot) result += + " " +stopstr + " "+ this.totprot +" hit";
+    if(1 < this.totprot) result += "s";
+
+  result += "\n";
+  result += "Equipment: "+es+"\n";
+  if(0 < this.magicitems.length) {
       result += "Magic Items:\n";
       for(let i = 0; i < this.magicitems.length; i++) {
         result += " • " +this.magicitems[i].fullname()
