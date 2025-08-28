@@ -73,7 +73,7 @@ class Race {
       this.row = races[this.name];
     }
   }
-  size() {return this.row[8];}
+  hexes() {return this.row[8];}
   MA(adj) {
     let ary = ("" + this.row[7]).split("/");
     for(let i = 0; i < ary.length; i++) {ary[i] -= -adj;}
@@ -131,6 +131,7 @@ var sub_talents = {
   "Elven" : "Elvish",
   "Goblin tongue" : "Goblin",
   "Human tongue" : "Common",
+  "Human Tongue" : "Common",
   "Medic" : "Physicker",
   "Merchant" : "Business Sense",
   "Riding" : "Horsemanship",
@@ -982,7 +983,7 @@ items["physicker’s kit"] = [50,4.0,"T","W"];
 items["pointer necklace"]  = [150,0.1,"U","S"];
 items["quarrel"] = [1,0.05,"M","I"];
 items["ration"] = [5,1.0,"M","B"];
-items["silver ring"] = [50,0.01,"R","S"];
+items["ring"] = [5,0.01,"R","J"];
 items["small backpack"] = [30,3.0,"P","L"];
 items["small bag"] = [1,0.25,"P","F"];
 items["small silver mirror"]  = [200,1.0,"M","S"];
@@ -1041,11 +1042,15 @@ function randomwood() {
 
 var metalvalues = {"": 1, bronze:1, copper:1, gold:100, iron:1, silver:10, steel:1};
 
-var allMaterials = ["ash","aspen","beech","bone","bronze","cedar","copper","cypress","ebony","elm","fir","gold","hawthorn","hazel","holly","iron","ivory","larch","laurel","maple","oak","pine","redwood","silver","spruce","steel","willow","yew"];
+var jewelryValues = {};
+Object.assign(jewelryValues,metalvalues);
+jewelryValues.jade = 10;
 
-var materialOptions = {C:{copper:1}, F:{"":1}, G:{gold:100}, I:metalvalues, L:{"":1}, R:{"":1}, S:{silver:10}, W:woodvalues, "*":{"":1}};
+var allMaterials = ["ash","aspen","beech","bone","bronze","cedar","copper","cypress","ebony","elm","fir","gold","hawthorn","hazel","holly","iron","ivory","jade","larch","laurel","maple","oak","pine","redwood","silver","spruce","steel","willow","yew"];
 
-var preciousMaterials = {gold:100, silver:10, bone:2, ebony:4, ivory:10};
+var materialOptions = {C:{copper:1}, F:{"":1}, G:{gold:100}, I:metalvalues, J:jewelryValues, L:{"":1}, R:{"":1}, S:{silver:10}, W:woodvalues, "*":{"":1}};
+
+var preciousMaterials = {gold:100, silver:10, bone:2, ebony:4, ivory:10, jade:10};
 
 var qualityCosts = {"well balanced":10, "fine":10, "very fine":20};
 
@@ -1344,6 +1349,13 @@ class TFTWeapon extends Thing {
 class Armor extends Thing {
   constructor(name,size,qty =1,mat="",mod="",ench=[]) {
     super("Armor",name,qty,mat,mod,ench);
+    this.Resize(size);
+  }
+
+  Resize(size) {
+    this.value = this.row[2];
+    this.weight = this.row[3];
+    if(preciousMaterials.hasOwnProperty(this.mat)) this.value *= preciousMaterials[this.mat];
     switch(size) {
     case "S":
       this.value *= 0.7;
@@ -1363,7 +1375,7 @@ class Armor extends Thing {
       break;
     }
   }
-
+  
   MakeEnchant(bonus) {
     if(0 == bonus) return;
     if(5 < bonus) return;
@@ -1711,6 +1723,8 @@ function row2gear(row) {
   let nthing = "";
   if("Weapon" === gcat) {
     nthing = new TFTWeapon(gthing,qty,gmat,gqua);
+  } else if ("Armor" === gcat) {
+    nthing = new Armor(gthing,1, qty,gmat,gqua);
   } else {
     nthing = new Thing(gcat,gthing,qty,gmat,gqua);
   }
@@ -1795,6 +1809,19 @@ function gear2row(g) {
   gear_sums();
 }
 
+function BuildThing(gcat,gthing,qty =1,gmat="",gqua="",ench=[]) {
+  let nthing = "";
+  if("Weapon" === gcat) {
+    nthing = new TFTWeapon(gthing,qty,gmat,gqua);
+  } else if ("Armor" === gcat) {
+    let race = new Race(window.document.forms[0].racef.value);
+    nthing = new Armor(gthing,race.hexes(), qty,gmat,gqua);
+  } else {
+    nthing = new Thing(gcat,gthing,qty,gmat,gqua);
+  }
+  return nthing;
+}
+
 function add_gear(form) {
   let qty = form.gearqty.value;
   let gcat = form.gearcat.value;
@@ -1803,7 +1830,7 @@ function add_gear(form) {
   let gmat = form.gearmaterial.value;
   let gbal = form.gearbalance.value;
   let gfine = form.gearfine.value;
-  let nthing = new Thing(gcat,gthing,qty,gmat,gbal+","+gfine);
+  let nthing = BuildThing(gcat,gthing,qty,gmat,gbal+","+gfine);
   gear2row(nthing);
 }
 
@@ -2072,7 +2099,7 @@ class Person {
       let matches = ary[j].match(armexp) || [];
       for(let i = 0; i < matches.length; i++) {
         let arm = matches[i].toLowerCase();
-        let testarm = new Armor(arm,this.race.size());
+        let testarm = new Armor(arm,this.race.hexes());
         if(string.match(/silver/i)) testarm.makeSilver();        
         this.armor = testarm;
         this.protections[arm] = testarm.stops;
@@ -2092,9 +2119,11 @@ class Person {
 
   parseEquipment(inp) {
     if('' === inp) return;
-    let ary = inp.split(",");
+    let splitter = ",";
+    if(inp.includes(";")) splitter = ";";
+    let ary = inp.split(splitter);
 
-    let countexp = /([0-9]+) /;
+    let countexp = /^([0-9]+) /;
     let potexp = /.*(potion|poison|gunpowder|antidote|solvent).*/;
     
     let tmp = Object.keys(enchantments).join("|").replace(/\u002B/g, "\\+");
@@ -2146,7 +2175,7 @@ class Person {
 
       if(!gear) for(let n in armors) {
         if(teststr.includes(n)) {
-          gear = new Armor(n,this.size,qty,mat,modlist,ench);
+          gear = new Armor(n,this.race.hexes(),qty,mat,modlist,ench);
           this.equipment.push(gear);
           this.armor = gear;
           break;
@@ -2298,7 +2327,10 @@ class Person {
         if(!this.weapon) this.weapon = gear;
         break;
       case "Armor":
-        if(!this.armor) this.armor = gear;
+        if(!this.armor) {
+          this.armor = gear;
+          this.armor.Resize(this.race.hexes());
+        }
         break;
       case "Shield":
         if(!this.shield) this.shield = gear;
@@ -2600,7 +2632,7 @@ class Person {
       let maxpen = rolldice(4) - this.DX;
       let tospend = randfrac(this.budget/2);
       let tocarry = randfrac(maxload - this.load);
-      let testarm = new Armor(arm,this.race.size());
+      let testarm = new Armor(arm,this.race.hexes());
       if((!this.wiz) && (testarm.name.includes("robe"))) continue;
       if(maxpen > testarm.DXa) continue;
       if(tospend < testarm.value) continue;
@@ -2933,7 +2965,6 @@ class Person {
     let wpar = [];
     for(let i = 0; i < this.equipment.length; i++) {
       let gear = this.equipment[i];
-      this.load += gear.weight;
       switch(gear.category) {
       case "Weapon":
         if(!this.weapon) this.weapon = gear;
@@ -2943,7 +2974,10 @@ class Person {
         wpar.push(wstr);
         break;
       case "Armor":
-        if(!this.armor) this.armor = gear;
+        gear.Resize(this.race.hexes());
+        if(!this.armor) {
+          this.armor = gear;
+        }
         break;
       case "Shield":
         if(!this.shield) this.shield = gear;
@@ -2952,6 +2986,7 @@ class Person {
       eq.push(this.equipment[i].fullname());
       break;
       }
+      this.load += gear.weight;
     }
     let es = eq.join(", ");
 
@@ -2967,6 +3002,7 @@ class Person {
       }
     }
     if(this.armor) {
+      this.armor.Resize(this.race.hexes());
       this.protections[this.armor.listname()] = this.armor.stops;
       this.totprot -= -this.armor.stops;
       this.adjDX -= -this.armor.DXa;
@@ -3087,7 +3123,7 @@ class Person {
       }
     armstr = armstr.charAt(0).toUpperCase() + armstr.slice(1);
     result += " " +armstr;
-    if(0 < this.totprot) result += + " " +stopstr + " "+ this.totprot +" hit";
+    if(0 < this.totprot) result += " " +stopstr + " "+ this.totprot +" hit";
     if(1 < this.totprot) result += "s";
 
   result += "\n";
