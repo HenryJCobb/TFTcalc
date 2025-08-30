@@ -132,6 +132,7 @@ var sub_talents = {
   "Goblin tongue" : "Goblin",
   "Human tongue" : "Common",
   "Human Tongue" : "Common",
+  "human tongue" : "Common",
   "Medic" : "Physicker",
   "Merchant" : "Business Sense",
   "Riding" : "Horsemanship",
@@ -967,6 +968,7 @@ shields["tower shield"] = [3,-2,70,35.0,"","W"];
 // Name 0:Cost 1:wt 2:cat 3:material
 var items = {};
 items["10-yard rope ladder"] = [50,4.0,"U","R"];
+items["amulet"] = [10,0.05,"R","J"];
 items["arrow"] = [1,0.05,"M","I"];
 items["backpack"] = [40,4.0,"P","L"];
 items["belt pouch"] = [5,0.5,"P","L"];
@@ -975,6 +977,7 @@ items["coin"] = [0.1,0.01,"M","I"];
 items["collapsible 6-foot pole"] = [5,2.0,"M","W"];
 items["empty skin"]  = [3,0.2,"M","L"];
 items["gem"]  = [50,0.01,"R","*"];
+items["horn"] = [10,0.5,"R","L"];
 items["jewel"]  = [1000,0.01,"R","*"];
 items["labyrinth kit"] = [30,6,"U","F"];
 items["medium bag"] = [20,2.0,"P","F"];
@@ -982,6 +985,7 @@ items["molotail"] = [20,2.0,"M","*"];
 items["physicker’s kit"] = [50,4.0,"T","W"];
 items["pointer necklace"]  = [150,0.1,"U","S"];
 items["quarrel"] = [1,0.05,"M","I"];
+items["quiver"] = [5,0.4,"P","L"];
 items["ration"] = [5,1.0,"M","B"];
 items["ring"] = [5,0.01,"R","J"];
 items["small backpack"] = [30,3.0,"P","L"];
@@ -1250,6 +1254,7 @@ class TFTWeapon extends Thing {
   }
   
   talentchk(person) {
+    this.wielder = person;
     if(("maul" === this.name) || ("club" === this.name) || ("crowbar" === this.name)) {
       let pnch = person.base_punch();
       this.ddice = pnch[0];
@@ -1331,11 +1336,23 @@ class TFTWeapon extends Thing {
   }
   
   listname() {
-    let result = Thing.prototype.listname.call(this);
-    result += " (" +this.ddice + "d";
-    if(this.dadds > 0) result += "+" +this.dadds;
-    if(this.dadds < 0) result += this.dadds;
-    if(0 != this.dxadj) result += ", +" +this.dxadj +" DX";
+    let result = "";
+    let deficit = this.row[3] - this.wielder.ST;
+    let wdice = this.ddice;
+    let wadds = this.dadds;
+    let wdx = this.dxadj;
+    if(0 < deficit) {
+      // ITL107
+      result += "underST ";
+      wadds -= deficit;
+      wdx -= Math.ceil(deficit / 2.0);
+    }
+    result += Thing.prototype.listname.call(this);
+    result += " (" + wdice + "d";
+    if(wadds > 0) result += "+" +wadds;
+    if(wadds < 0) result += wadds;
+    if(wdx > 0) result += ", +" +wdx +" DX";
+    if(wdx < 0) result += ", " +wdx +" DX";
     result += ")";
     return result;
   }

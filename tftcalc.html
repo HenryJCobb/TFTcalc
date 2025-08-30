@@ -7,6 +7,10 @@ require 'hcobb/head.inc';
 <meta content="utf-8" http-equiv="encoding">
 <title>TFT CP Calculator</title>
 <style type="text/css">
+  .exbox {
+      padding: 5px;
+      height: 60px;
+  }
 .grid-container {
   display: grid;
   grid-template-columns: auto auto;
@@ -168,8 +172,8 @@ Languages: <input type="TEXT" name="LNf" size="80"><br>
         </tbody>
         <tfoot>
           <tr><th colspan="6">Totals</th><th>$<input type="text" name="eqtc" readonly size="8"></th><th><input type="text" name="eqtw" readonly size="6">#</th></tr>
-  <tr style="height:60px">
-    <th colspan="8"><input type="hidden" id="gearselect" name="gearselect" value="-1"><button type="button" onclick="add_gear(this.form);">Add</button>
+  <tr>
+    <th colspan="8" class="exbox"><input type="hidden" id="gearselect" name="gearselect" value="-1"><button type="button" onclick="add_gear(this.form);">Add</button>
       <input type="number" id="gearqty" name="gearqty" min="1" max="100" value="1"/>
       <select name="gearcat" onchange="gear_cat(this.form);"> 
         <option></option>
@@ -191,7 +195,7 @@ Languages: <input type="TEXT" name="LNf" size="80"><br>
 <select name="gearfine" style="display: none">
   <option></option>
   </select>
-      </th>
+    </th>
   </tr>
   </tfoot>
   </table>
