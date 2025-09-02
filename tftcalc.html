@@ -34,7 +34,7 @@ smblock {
 display: none;
 }
 </style>
-<script src="js/tftcalc.js?v=0.15"></script>
+<script src="js/tftcalc.js?v=0.16"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
@@ -46,8 +46,7 @@ display: none;
 <form>
 <div class="grid-container">
 <div class="atblock">
-Name: <input type="TEXT" name="Namef" size="60">
-<div id="canload" class="canload"><button type="button" onclick="save_ch(this.form);">Save</button> Load: <select name="loadch"><option></option></select> <button type="button" onclick="export_ch(this.form);">Export All</button></div><br>
+Name: <input type="TEXT" name="Namef" size="60"><br>
 <select name="racef" onchange="change_race(this.form);">
   <option>Human
   <option>Centaur
@@ -135,15 +134,15 @@ IQ <select name="IQf" onchange="price(this.form);">
 Mana <select name="Manaf" onchange="price(this.form);">
   <option>0
 </select><br>
-Talents: <input type="TEXT" name="TLf" size="80"><br>
+Talents: <input type="TEXT" name="TLf" size="60"><br>
 <select name="TLs">
   <option>-
 </select> <button type="button" onclick="add_talent(this.form);">Add</button> <button type="button" onclick="del_talent(this.form);">Delete</button><br>
-Spells: <input type="TEXT" name="SPf" size="80"><br>
+Spells: <input type="TEXT" name="SPf" size="60"><br>
 <select name="SPs">
   <option>-
 </select> <button type="button" onclick="add_spell(this.form);">Add</button> <button type="button" onclick="del_spell(this.form);">Delete</button><br>
-Languages: <input type="TEXT" name="LNf" size="80"><br>
+Languages: <input type="TEXT" name="LNf" size="60"><br>
 <select name="LNs">
   <option>-
 </select> <button type="button" onclick="add_language(this.form);">Add</button> <button type="button" onclick="del_language(this.form);">Delete</button><br><br>
@@ -198,15 +197,30 @@ Languages: <input type="TEXT" name="LNf" size="80"><br>
     </th>
   </tr>
   </tfoot>
-  </table>
+      </table>
+      <table id="encht" border="1" style="display: none">
+ <thead>
+          <tr><th>Enchantment</th><th>Level</th><th>Cost</th></tr>
+        </thead>
+        <tbody>
+        </tbody>
+        <tfoot>
+          <tr><th colspan="2">Total enchantment cost</th><th>$<input type="text" name="tenc" readonly size="8"></th></tr>
+  <tr>
+    <th id="enchtedit" colspan="3" class="exbox" style="display: none"><input type="hidden" id="enchtselect" name="enchtselect" value="-1"><button type="button" onclick="add_encht(this.form);">Add enchantment</button>
+<select name="enchtname" onchange="enchant_thing(this.form);">
+  <option></option>
+  </select>
+      Level: <input type="number" id="enchlvl" name="enchlvl" min="1" max="1" value="1"/>
+    </th>
+  </tr>
+  </tfoot>
+      </table>
   </div>
   </div>
 </form>
 <hr>
     <p>The Fantasy Trip(t.m.) is a trademark of Steve Jackson Games, and their rules and art are copyrighted by Steve Jackson Games. All rights are reserved by Steve Jackson Games.<br>
 This game aid is the original creation of <a href="http://www.hcobb.com/">Henry J. Cobb</a> and is released for free distribution, and not for resale, under the permissions granted in the <a href="http://www.sjgames.com/general/online_policy.html">Steve Jackson Games Online Policy</a>.</p>
-<script LANGUAGE="JavaScript1.1">
-if(canstore()) document.getElementById("canload").style.display = "block";
-</script>
 </body>
 </html>

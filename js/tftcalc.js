@@ -135,6 +135,7 @@ var sub_talents = {
   "human tongue" : "Common",
   "Medic" : "Physicker",
   "Merchant" : "Business Sense",
+  "Missile Weapons I": "Missile Weapons",
   "Riding" : "Horsemanship",
   "Sorcerer’s Tongue" : "Sorcerers’ Tongue",
   "Sorcerers' Tongue" : "Sorcerers’ Tongue",
@@ -806,24 +807,23 @@ class Spell {
 };
 
 class Enchantment {
-  constructor(name,budget) {
-    this.name = name;
-    this.row = enchantments[name];
+  set_level(lvl) {
     this.value = this.row[0];
     this.level = 1;
+    this.name = this.basename;
     let rule = this.row[1];
     if("" === rule) return;
+
     let note = rule.substring(0,1);
     switch (note) {
     case "A":
-      while((budget > 2*this.value) && (5 > this.level)) {
+      while((lvl > this.level) && (5 > this.level)) {
         this.level++;
         this.value *= 2;
       }
       break;
     case "B":
-      this.level = Math.floor(budget / this.value);
-      if(20 < this.level) this.level = 20;
+      this.level = lvl;
       this.value *= this.level;
       break;
     default:
@@ -832,34 +832,40 @@ class Enchantment {
     let mod = rule.substring(1);
     switch (mod) {
     case "D":
-      this.name = "" + this.level +"-dice " +name;
+      this.name = "" + this.level +"-dice " +this.basename;
       break;
     case "H":
       if(this.level > 1)
-        this.name = "" + this.level +"-hex " +name;
+        this.name = "" + this.level +"-hex " +this.basename;
       break;
     case "L":
       if(1 == this.level) {
         this.level++;
         this.value *= 2;
       }
-      this.name = "" + this.level +"-language " +name;
+      this.name = "" + this.level +"-language " +this.basename;
       break;
     case "M":
-      this.name = "-" + this.level +" " +name;
+      this.name = "-" + this.level +" " +this.basename;
       break;
     case "5MH":
       if(this.level > 1)
-        this.name = "" + (5* this.level) +"-megahex " +name;
+        this.name = "" + (5* this.level) +"-megahex " +this.basename;
       break;
     case "P":
-      this.name = "+" + this.level +" " +name;
+      this.name = "+" + this.level +" " +this.basename;
       break;
     case "S":
-      this.value += 1000;
-      this.name = "" + this.level +" point " +name;
+      this.name = "" + this.level +" point " +this.basename;
       break;
     }
+
+  }
+  
+  constructor(name,lvl=1) {
+    this.basename = name;
+    this.row = enchantments[name];
+    set_level(lvl);
   }
   
   material() {
@@ -2102,38 +2108,22 @@ class Person {
     }
   }
 
-  parseArmor(string) {
-    this.protections = [];
-    delete this.armor;
-    delete this.shield;
-    this.totprot = 0;
-    let ary = string.split(",");
-    let armexp = new RegExp(Object.keys(armors).join("|"), "gi");
-    let shieldexp = new RegExp(Object.keys(shields).join("|"), "gi");
+  parseEnchantments(inp) {
+    let res = [];
+    if('' === inp) return res;
     let tmp = Object.keys(enchantments).join("|").replace(/\u002B/g, "\\+");
-    let enchexp = new RegExp(tmp, "g");
-    for(let j =0; j < ary.length; j++) {
-      let matches = ary[j].match(armexp) || [];
+    let enchexp = new RegExp(tmp, "gi");
+    let matches = inp.match(enchexp) || [];
       for(let i = 0; i < matches.length; i++) {
-        let arm = matches[i].toLowerCase();
-        let testarm = new Armor(arm,this.race.hexes());
-        if(string.match(/silver/i)) testarm.makeSilver();        
-        this.armor = testarm;
-        this.protections[arm] = testarm.stops;
-        this.totprot += testarm.stops;
-      }
-      matches = ary[j].match(shieldexp) || [];
-      for(let i = 0; i < matches.length; i++) {
-        let shd = matches[i].toLowerCase();
-        let testshd = new Shield(shd);
-        if(string.match(/silver/i)) testshd.makeSilver();        
-        this.shield = testshd;
-        this.protections[shd] = testshd.stops;
-        this.totprot += testshd.stops;
-      }
-    }
+        let estr = matches[i];
+        if(!estr in enchantments) {
+          console.log("No enchantment match for {" +estr +"}");
+          continue;
+        }
+        
+      }    
   }
-
+  
   parseEquipment(inp) {
     if('' === inp) return;
     let splitter = ",";
@@ -2142,17 +2132,26 @@ class Person {
 
     let countexp = /^([0-9]+) /;
     let potexp = /.*(potion|poison|gunpowder|antidote|solvent).*/;
-    
-    let tmp = Object.keys(enchantments).join("|").replace(/\u002B/g, "\\+");
-    let enchexp = new RegExp(tmp, "g");
+    let cashexp = /\$(\d+) in coin/;
     for(let j =0; j < ary.length; j++) {
       let teststr = ary[j].toLowerCase().trim();
       if("" === teststr) continue;
-
+      if("cloth" === teststr) teststr = "cloth armor";
+      if("leather" === teststr) teststr = "leather armor";
+        
       let gear = null;
       let ench = [];
       
       let qty = 1;
+
+      let coinmatch = teststr.match(cashexp);
+      if(null != coinmatch) {
+        qty = 1 * coinmatch[1];
+        gear = new Thing("Item","coin",qty,"silver");
+        this.equipment.push(gear);
+        continue;
+      }
+
       let matches = teststr.match(countexp)
       if(null != matches) {
         qty = 1 * matches[0];
