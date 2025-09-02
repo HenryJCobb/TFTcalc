@@ -3040,6 +3040,7 @@ class Person {
       }
       this.protections[sname] = prot;
       this.totprot -= -prot;
+      this.adjDX -= -this.shield.DXa;
     }
 
     let carryST = 1.0 * this.ST;
